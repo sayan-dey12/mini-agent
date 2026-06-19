@@ -1,0 +1,28 @@
+{
+  "name": "mini-agent",
+  "version": "1.0.0",
+  "description": "Local AI developer assistant with CLI and Telegram support",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "clean": "turbo clean"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "cli",
+    "typescript",
+    "telegram",
+    "ollama"
+  ],
+  "author": "Sayan Dey",
+  "license": "ISC",
+  "packageManager": "pnpm@11.8.0",
+  "type": "module",
+  "devDependencies": {
+    "turbo": "^2.9.18",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { HelloCommand } from "./commands/HelloCommand.js";
+import { InduCommand } from "./commands/Indu.js";
 const program = new Command();
 
 program
@@ -15,4 +16,12 @@ program
     command.execute();
   });
 
+  program
+  .command("indu")
+  .description("A special message for Pomi ❤️")
+  .action(() => {
+    new InduCommand().execute();
+  });
+
+  
 export default program;

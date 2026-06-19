@@ -1,0 +1,18 @@
+{
+  "name": "@mini-agent/cli",
+  "version": "1.0.0",
+  "description": "CLI application for mini agent",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "bin": {
+    "agent": "./dist/index.js"
+  },
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "commander": "^15.0.0"
+  }
+}

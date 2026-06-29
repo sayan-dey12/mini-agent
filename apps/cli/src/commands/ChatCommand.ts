@@ -1,6 +1,7 @@
 import readline from "node:readline/promises";
 import { stdin, stdout } from "node:process";
-import {AgentFactory} from "@mini-agent/agents";
+//import {AgentFactory} from "@mini-agent/agents";
+import { ApplicationContainer } from "@mini-agent/core";
 
 // import { Agent } from "@mini-agent/agents";
 // import { MockProvider } from "@mini-agent/providers";
@@ -9,7 +10,7 @@ export class ChatCommand {
 
     async execute(): Promise<void> {
 
-        const agent = AgentFactory.create();
+        const agent = ApplicationContainer.agent();
 
         const rl = readline.createInterface({
             input: stdin,

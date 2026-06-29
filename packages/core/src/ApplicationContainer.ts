@@ -6,12 +6,15 @@ import type { IAgent } from "@mini-agent/agents";
 
 export class ApplicationContainer {
 
+    private static _agent : IAgent;
+
     static agent(): IAgent {
+        if(!this._agent){
+            const provider = new MockProvider();
+            this._agent = new Agent(provider);
 
-        const provider = new MockProvider();
-
-        return new Agent(provider);
-
+        }
+        return this._agent;
     }
 
 }

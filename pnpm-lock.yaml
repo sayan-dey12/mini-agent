@@ -225,6 +225,9 @@ importers:
       '@mini-agent/agents':
         specifier: workspace:*
         version: link:../../packages/agents
+      '@mini-agent/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@mini-agent/providers':
         specifier: workspace:*
         version: link:../../packages/providers
@@ -249,6 +252,15 @@ importers:
 
   packages/agents:
     dependencies:
+      '@mini-agent/providers':
+        specifier: workspace:*
+        version: link:../providers
+
+  packages/core:
+    dependencies:
+      '@mini-agent/agents':
+        specifier: workspace:*
+        version: link:../agents
       '@mini-agent/providers':
         specifier: workspace:*
         version: link:../providers

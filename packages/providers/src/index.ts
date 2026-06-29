@@ -5,3 +5,5 @@ export * from "./providers/MockProvider.js";
 export * from "./types/ProviderRequest.js";
 
 export * from "./types/ProviderResponse.js";
+
+export * from "./ProviderFactory.js";

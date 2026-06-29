@@ -1,6 +1,7 @@
-import { Agent } from "@mini-agent/agents";
+//import { Agent } from "@mini-agent/agents";
 import type { AgentRequest } from "@mini-agent/agents";
-import { MockProvider } from "@mini-agent/providers";
+//import { MockProvider } from "@mini-agent/providers";
+import {AgentFactory} from "@mini-agent/agents";
 
 const message: AgentRequest = {
     message: "Hello Agent!",
@@ -8,8 +9,7 @@ const message: AgentRequest = {
 
 export class TestCommand {
   async execute(): Promise<void> {
-    const provider = new MockProvider();
-    const agent = new Agent(provider);
+    const agent = AgentFactory.create();
 
     const response = await agent.execute(message);
 

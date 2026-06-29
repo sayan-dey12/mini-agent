@@ -22,7 +22,7 @@ export class ChatCommand {
 
         while (true) {
 
-            const message = await rl.question("You > ");
+            const message = await rl.question("You > ");  //returns a promise
 
             if (message.toLowerCase() === "exit") {
                 break;

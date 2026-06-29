@@ -244,7 +244,11 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1
 
-  packages/agents: {}
+  packages/agents:
+    dependencies:
+      '@mini-agent/providers':
+        specifier: workspace:*
+        version: link:../providers
 
   packages/providers: {}
 

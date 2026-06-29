@@ -1,3 +1,3 @@
 export interface ProviderResponse{
-    message: string;
+    text: string;
 }

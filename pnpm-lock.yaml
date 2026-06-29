@@ -225,6 +225,9 @@ importers:
       '@mini-agent/agents':
         specifier: workspace:*
         version: link:../../packages/agents
+      '@mini-agent/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
       boxen:
         specifier: ^8.0.1
         version: 8.0.1

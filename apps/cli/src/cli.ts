@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { HelloCommand } from "./commands/HelloCommand.js";
 import { InduCommand } from "./commands/Indu.js";
 import { TestCommand } from "./commands/TestCommand.js";
+import { ChatCommand } from "./commands/ChatCommand.js";
 
 const program = new Command();
 
@@ -30,6 +31,13 @@ program
   .description("test the agent package")
   .action(async()=>{
     await new TestCommand().execute();
+  })
+
+  program
+  .command("chat")
+  .description("Start a chat with the AI agent")
+  .action(async()=>{
+    await new ChatCommand().execute();
   })
 
   

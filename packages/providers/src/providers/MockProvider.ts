@@ -4,6 +4,7 @@ import type {ProviderResponse} from "../types/ProviderResponse.js";
 
 export class MockProvider implements IProvider{
     async generate(request: ProviderRequest): Promise<ProviderResponse>{
-        return {text: `Mock response for message: ${request.message}`};
+        const lastUserMessage = [...request.messages].reverse().find(msg =>msg.role === "user");
+        return {text: `Mock response for message: ${lastUserMessage?.content ?? "No user message found"}`};
     }
 }

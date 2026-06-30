@@ -7,3 +7,5 @@ export * from "./types/ProviderRequest.js";
 export * from "./types/ProviderResponse.js";
 
 export * from "./ProviderFactory.js";
+
+export * from "./providers/PythonProvider.js";

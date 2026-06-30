@@ -16,6 +16,13 @@ async def home():
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
 
+    last_user_message = next(
+        (
+            message for message in reversed(request.messages) if message.role == "user"
+        ),
+        None,
+    )
+
     return ChatResponse(
-        text=f"Python received: {request.message}"
+        text=f"Python received: {last_user_message.content if last_user_message else ''}"
     )

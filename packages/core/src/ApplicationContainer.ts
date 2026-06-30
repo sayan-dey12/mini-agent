@@ -1,6 +1,7 @@
 import { Agent } from "@mini-agent/agents";
 
 import { MockProvider } from "@mini-agent/providers";
+import {PythonProvider} from "@mini-agent/providers";
 
 import type { IAgent } from "@mini-agent/agents";
 
@@ -10,7 +11,8 @@ export class ApplicationContainer {
 
     static agent(): IAgent {
         if(!this._agent){
-            const provider = new MockProvider();
+           // const provider = new MockProvider();
+           const provider = new PythonProvider("http://localhost:8000");
             this._agent = new Agent(provider);
 
         }

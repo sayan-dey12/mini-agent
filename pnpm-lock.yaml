@@ -231,6 +231,9 @@ importers:
       '@mini-agent/providers':
         specifier: workspace:*
         version: link:../../packages/providers
+      '@mini-agent/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       boxen:
         specifier: ^8.0.1
         version: 8.0.1
@@ -255,6 +258,9 @@ importers:
       '@mini-agent/providers':
         specifier: workspace:*
         version: link:../providers
+      '@mini-agent/shared':
+        specifier: workspace:*
+        version: link:../shared
 
   packages/core:
     dependencies:
@@ -265,7 +271,11 @@ importers:
         specifier: workspace:*
         version: link:../providers
 
-  packages/providers: {}
+  packages/providers:
+    dependencies:
+      '@mini-agent/shared':
+        specifier: workspace:*
+        version: link:../shared
 
   packages/shared: {}
 

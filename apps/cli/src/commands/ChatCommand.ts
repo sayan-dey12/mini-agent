@@ -2,7 +2,7 @@ import readline from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 
 import { ApplicationContainer } from "@mini-agent/core";
-import type { ChatMessage } from "@mini-agent/agents";
+import type { ChatMessage } from "@mini-agent/shared";
 
 export class ChatCommand {
 

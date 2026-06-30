@@ -1,8 +1,4 @@
-export interface ChatMessage {
-    role: "system" | "user" | "assistant";
-    content: string;
-}
-
+import { ChatMessage } from "@mini-agent/shared";
 export interface ProviderRequest {
     messages: ChatMessage[];
 }

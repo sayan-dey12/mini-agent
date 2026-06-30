@@ -16,6 +16,7 @@
     "@mini-agent/agents": "workspace:*",
     "@mini-agent/core": "workspace:*",
     "@mini-agent/providers": "workspace:*",
+    "@mini-agent/shared": "workspace:*",
     "boxen": "^8.0.1",
     "chalk": "^5.6.2",
     "commander": "^15.0.0",

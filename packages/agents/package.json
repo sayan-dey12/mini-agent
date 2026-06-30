@@ -8,6 +8,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@mini-agent/providers": "workspace:*"
+    "@mini-agent/providers": "workspace:*",
+    "@mini-agent/shared": "workspace:*"
   }
 }

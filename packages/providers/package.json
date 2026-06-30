@@ -6,5 +6,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@mini-agent/shared": "workspace:*"
+  }
 }

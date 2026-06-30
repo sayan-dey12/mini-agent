@@ -11,29 +11,60 @@ export class PythonProvider implements IProvider {
         request: ProviderRequest
     ): Promise<ProviderResponse> {
 
-        const response = await fetch(
-            `${this.baseUrl}/chat`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    messages: request.messages,
-                }),
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error(
-                `Python AI Service returned ${response.status}`
+        const controller = new AbortController();
+        const timeout = setTimeout(()=>{
+            controller.abort();
+        }, 20000); // 20 seconds timeout
+        
+        try {
+            const response = await fetch(
+                `${this.baseUrl}/chat`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        messages: request.messages,
+                    }),
+                    signal: controller.signal,
+                }
             );
+             if (!response.ok) {
+                throw new Error(
+                    `Python AI Service returned ${response.status}`
+                );
+            }
+            const data: ProviderResponse = await response.json();
+
+            return {
+                text: data.text,
+            };
+
+        } catch (error) {
+            
+            if (error instanceof Error) {
+
+                if (error.name === "AbortError") {
+                    throw new Error(
+                        "AI Service request timed out."
+                    );
+                }
+
+                throw new Error(
+                    `Unable to communicate with AI Service: ${error.message}`
+                );
+            }
+
+            throw new Error(
+                "Unknown error while communicating with AI Service."
+            );
+
+        } finally {
+
+            clearTimeout(timeout);
+
         }
-
-        const data: ProviderResponse = await response.json();
-
-        return {
-            text: data.text,
-        };
+        
     }
 }

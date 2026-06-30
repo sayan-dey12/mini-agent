@@ -4,6 +4,7 @@ import { MockProvider } from "@mini-agent/providers";
 import {PythonProvider} from "@mini-agent/providers";
 
 import type { IAgent } from "@mini-agent/agents";
+import {config} from "./config/config.js";
 
 export class ApplicationContainer {
 
@@ -12,7 +13,7 @@ export class ApplicationContainer {
     static agent(): IAgent {
         if(!this._agent){
            // const provider = new MockProvider();
-           const provider = new PythonProvider("http://localhost:8000");
+           const provider = new PythonProvider(config.aiServiceUrl);
             this._agent = new Agent(provider);
 
         }

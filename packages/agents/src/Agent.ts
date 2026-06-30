@@ -8,7 +8,7 @@ export class Agent implements IAgent{
 
     async execute(request: AgentRequest): Promise<AgentResponse> {
         const response = await this.provider.generate(
-            {message: request.message}
+            {messages: request.messages}
         )
         const fullResponse: AgentResponse = { text: response.text };
         return fullResponse;

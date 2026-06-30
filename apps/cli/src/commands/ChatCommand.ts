@@ -1,10 +1,8 @@
 import readline from "node:readline/promises";
 import { stdin, stdout } from "node:process";
-//import {AgentFactory} from "@mini-agent/agents";
-import { ApplicationContainer } from "@mini-agent/core";
 
-// import { Agent } from "@mini-agent/agents";
-// import { MockProvider } from "@mini-agent/providers";
+import { ApplicationContainer } from "@mini-agent/core";
+import type { ChatMessage } from "@mini-agent/agents";
 
 export class ChatCommand {
 
@@ -20,19 +18,31 @@ export class ChatCommand {
         console.log("Mini Agent Chat");
         console.log("Type 'exit' to quit.\n");
 
+        const messages: ChatMessage[] = [];
+
         while (true) {
 
-            const message = await rl.question("You > ");  //returns a promise
+            const input = await rl.question("You > ");
 
-            if (message.toLowerCase() === "exit") {
+            if (input.toLowerCase() === "exit") {
                 break;
             }
 
+            messages.push({
+                role: "user",
+                content: input,
+            });
+
             const response = await agent.execute({
-                message,
+                messages,
             });
 
             console.log(`AI  > ${response.text}\n`);
+
+            messages.push({
+                role: "assistant",
+                content: response.text,
+            });
 
         }
 

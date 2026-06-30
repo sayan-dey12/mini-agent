@@ -5,7 +5,12 @@ import { AgentFactory, type AgentRequest } from "@mini-agent/agents";
 import { ApplicationContainer } from "@mini-agent/core";
 
 const message: AgentRequest = {
-    message: "Hello Agent!",
+  messages:[
+    {
+      role: "user",
+      content: "Hello Agent!",
+    }
+  ]
 }
 
 export class TestCommand {

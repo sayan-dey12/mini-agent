@@ -1,8 +1,8 @@
-interface ChatMessage {
+export interface ChatMessage {
     role: "system" | "user" | "assistant";
     content: string;
 }
 
-interface AgentRequest {
+export interface AgentRequest {
     messages: ChatMessage[];
 }

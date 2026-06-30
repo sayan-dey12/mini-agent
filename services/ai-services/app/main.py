@@ -3,7 +3,11 @@ from fastapi import FastAPI
 from app.schemas.chat import ChatRequest
 from app.schemas.chat import ChatResponse
 
+from app.services.LLMServices import LLMService
+
 app = FastAPI()
+
+llm = LLMService()
 
 
 @app.get("/")
@@ -16,13 +20,10 @@ async def home():
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
 
-    last_user_message = next(
-        (
-            message for message in reversed(request.messages) if message.role == "user"
-        ),
-        None,
+    text = llm.chat(
+        [message.model_dump() for message in request.messages]
     )
 
     return ChatResponse(
-        text=f"Python received: {last_user_message.content if last_user_message else ''}"
+        text=text
     )

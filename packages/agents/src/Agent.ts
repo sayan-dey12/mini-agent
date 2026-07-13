@@ -3,12 +3,17 @@ import type {AgentRequest} from "./types/AgentRequest.js";
 import type {AgentResponse} from "./types/AgentResponse.js";
 
 import type {IProvider} from "@mini-agent/providers";
+import {PromptBuilder} from "./prompt/PromptBuilder.js";
 export class Agent implements IAgent{
-    constructor(private provider: IProvider){}
-
+    constructor(
+        private provider: IProvider,
+        private readonly promptBuilder: PromptBuilder = new PromptBuilder()
+    ){}
+    
     async execute(request: AgentRequest): Promise<AgentResponse> {
+        const prompt = this.promptBuilder.build(request);
         const response = await this.provider.generate(
-            {messages: request.messages}
+            {messages: prompt}
         )
         const fullResponse: AgentResponse = { text: response.text };
         return fullResponse;

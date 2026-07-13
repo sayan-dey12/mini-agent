@@ -12,8 +12,8 @@ export class ApplicationContainer {
 
     static agent(): IAgent {
         if(!this._agent){
-            const provider = new MockProvider();
-           //const provider = new PythonProvider(config.aiServiceUrl);
+            // const provider = new MockProvider();
+           const provider = new PythonProvider(config.aiServiceUrl);
             this._agent = new Agent(provider);
 
         }

@@ -72,9 +72,65 @@ export class PythonProvider implements IProvider {
         request: ProviderRequest
     ): AsyncIterable<string> {
 
-        throw new Error(
-            "Streaming not implemented."
+        const controller = new AbortController();
+
+        const timeout = setTimeout(
+            () => controller.abort(),
+            10000
         );
+
+        try {
+
+            const response = await fetch(
+                `${this.baseUrl}/chat/stream`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        messages: request.messages,
+                    }),
+                    signal: controller.signal,
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    `AI Service returned ${response.status}`
+                );
+            }
+
+            if (!response.body) {
+                throw new Error(
+                    "Response body is empty."
+                );
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+
+            while (true) {
+
+                const { done, value } =
+                    await reader.read();
+
+                if (done) {
+                    break;
+                }
+
+                yield decoder.decode(
+                    value,
+                    { stream: true }
+                );
+
+            }
+
+        } finally {
+
+            clearTimeout(timeout);
+
+        }
 
     }
 }

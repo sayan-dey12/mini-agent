@@ -1,13 +1,10 @@
 {
-  "name": "tools",
+  "name": "@mini-agent/tools",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+     "build": "tsc -p tsconfig.json"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "type": "module"
 }

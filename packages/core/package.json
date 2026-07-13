@@ -9,6 +9,7 @@
     },
     "dependencies": {
         "@mini-agent/agents": "workspace:*",
-        "@mini-agent/providers": "workspace:*"
+        "@mini-agent/providers": "workspace:*",
+        "@mini-agent/tools": "workspace:*"
     }
 }

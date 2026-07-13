@@ -270,6 +270,9 @@ importers:
       '@mini-agent/providers':
         specifier: workspace:*
         version: link:../providers
+      '@mini-agent/tools':
+        specifier: workspace:*
+        version: link:../tools
 
   packages/providers:
     dependencies:

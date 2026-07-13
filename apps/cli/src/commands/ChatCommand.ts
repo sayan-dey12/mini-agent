@@ -3,6 +3,7 @@ import { stdin, stdout } from "node:process";
 
 import { ApplicationContainer } from "@mini-agent/core";
 import type { ChatMessage } from "@mini-agent/shared";
+import {Conversation} from "@mini-agent/agents";
 
 export class ChatCommand {
 
@@ -18,7 +19,7 @@ export class ChatCommand {
         console.log("Mini Agent Chat");
         console.log("Type 'exit' to quit.\n");
 
-        const messages: ChatMessage[] = [];
+        const conversation = new Conversation();
 
         while (true) {
 
@@ -28,10 +29,8 @@ export class ChatCommand {
                 break;
             }
 
-            messages.push({
-                role: "user",
-                content: input,
-            });
+            conversation.addUserMessage(input);
+            const messages: ChatMessage[] = conversation.getMessages();
 
             const response = await agent.execute({
                 messages,
@@ -39,10 +38,7 @@ export class ChatCommand {
 
             console.log(`AI  > ${response.text}\n`);
 
-            messages.push({
-                role: "assistant",
-                content: response.text,
-            });
+           conversation.addAssistantMessage(response.text);
 
         }
 

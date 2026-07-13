@@ -7,4 +7,26 @@ export class MockProvider implements IProvider{
         const lastUserMessage = [...request.messages].reverse().find(msg =>msg.role === "user");
         return {text: `Mock response for message: ${lastUserMessage?.content ?? "No user message found"}`};
     }
+    async *stream(
+        request: ProviderRequest
+    ): AsyncIterable<string> {
+
+        const lastUserMessage =
+            request.messages.findLast(
+                m => m.role === "user"
+            );
+
+        const text = `Mock response for ${lastUserMessage?.content ?? ""}`;
+
+        for (const word of text.split(" ")) {
+
+            await new Promise(resolve =>
+                setTimeout(resolve, 150)
+            );
+
+            yield word + " ";
+
+        }
+
+    }
 }

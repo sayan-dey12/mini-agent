@@ -67,4 +67,14 @@ export class PythonProvider implements IProvider {
         }
         
     }
+
+    async *stream(
+        request: ProviderRequest
+    ): AsyncIterable<string> {
+
+        throw new Error(
+            "Streaming not implemented."
+        );
+
+    }
 }

@@ -31,14 +31,27 @@ export class ChatCommand {
 
             conversation.addUserMessage(input);
             const messages: ChatMessage[] = conversation.getMessages();
+            
+            process.stdout.write("AI  > ");
 
-            const response = await agent.execute({
-                messages,
-            });
+            let assistantResponse = "";
+            for await (const chunk of agent.stream({messages})){
+                process.stdout.write(chunk);
+                assistantResponse += chunk;
+            }
 
-            console.log(`AI  > ${response.text}\n`);
+            console.log("\n");
+            
 
-           conversation.addAssistantMessage(response.text);
+            // const response = await agent.execute({
+            //     messages,                                    //for execute function -> all response together
+            // });
+            // console.log(`AI  > ${response.text}\n`);
+            // conversation.addAssistantMessage(response.text);
+
+            conversation.addAssistantMessage(assistantResponse);
+
+        
 
         }
 

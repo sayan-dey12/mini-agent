@@ -7,8 +7,11 @@ load_dotenv()
 
 class GroqProvider:
     def __init__(self):
+        api_key = os.environ.get("GROQ_API_KEY")
+        if not api_key:
+            raise RuntimeError("GROQ_API_KEY environment variable is not set.")
         self.client = Groq(
-            api_key=os.environ.get("GROQ_API_KEY"),
+            api_key=api_key,
         )
 
     def chat(self, messages, model="llama-3.3-70b-versatile"):
@@ -17,3 +20,15 @@ class GroqProvider:
             messages=messages,
         )
         return response.choices[0].message.content
+    
+    def stream(self , messages , model="llama-3.3-70b-versatile"):
+        response = self.client.chat.completions.create(
+            model=model,
+            messages=messages,
+            stream=True
+        )
+        for chunk in response:
+            delta = chunk.choices[0].delta.content
+            if delta:
+                yield delta
+        

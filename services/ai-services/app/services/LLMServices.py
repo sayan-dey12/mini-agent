@@ -8,3 +8,6 @@ class LLMService:
     def chat(self, messages):
 
         return self.provider.chat(messages)
+    
+    def stream(self,messages):
+        yield from self.provider.stream(messages)

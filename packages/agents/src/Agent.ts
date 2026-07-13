@@ -18,4 +18,21 @@ export class Agent implements IAgent{
         const fullResponse: AgentResponse = { text: response.text };
         return fullResponse;
     }
+    async *stream(
+        request: AgentRequest
+    ): AsyncIterable<string> {
+
+        const prompt = this.promptBuilder.build(request);
+
+        for await (
+            const chunk of this.provider.stream({
+                messages: prompt,
+            })
+        ) {
+
+            yield chunk;
+
+        }
+
+    }
 }

@@ -3,4 +3,5 @@ import type {AgentRequest} from "../types/AgentRequest.js";
 
 export interface IAgent {
     execute(request: AgentRequest): Promise<AgentResponse>;
+    stream(request: AgentRequest): AsyncIterable<string>;
 }

@@ -2,14 +2,15 @@ from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from app.schemas.chat import ChatRequest
 from app.schemas.chat import ChatResponse
-
+from app.providers.GroqProvider import GroqProvider
 
 from app.services.LLMServices import LLMService
 
 
 app = FastAPI()
 
-llm = LLMService()
+provider = GroqProvider()
+llm = LLMService(provider)
 
 
 @app.get("/")

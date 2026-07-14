@@ -2,11 +2,11 @@ from app.providers.GroqProvider import GroqProvider
 from app.tools.registry import ToolRegistry
 from app.tools.executor import ToolExecutor
 from app.tools.builtin.calculator import CalculatorTool
-
+from app.providers.base import ILLMProvider
 class LLMService:
 
-    def __init__(self):
-        self.provider = GroqProvider()
+    def __init__(self , provider: ILLMProvider ):
+        self.provider = provider
         self.registry = ToolRegistry()
 
         self.registry.register(

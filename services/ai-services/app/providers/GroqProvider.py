@@ -2,10 +2,11 @@ import os
 
 from groq import Groq
 from dotenv import load_dotenv
+from app.providers.base import ILLMProvider
 
 load_dotenv()
 
-class GroqProvider:
+class GroqProvider(ILLMProvider):
     def __init__(self):
         api_key = os.environ.get("GROQ_API_KEY")
         if not api_key:

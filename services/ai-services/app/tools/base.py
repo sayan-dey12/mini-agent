@@ -12,6 +12,11 @@ class Tool(ABC):
     @abstractmethod
     def description(self) -> str:
         ...
+    
+    @property
+    @abstractmethod
+    def parameters(self) -> dict:
+        ...
 
     @abstractmethod
     def execute(self, arguments: dict) -> str:

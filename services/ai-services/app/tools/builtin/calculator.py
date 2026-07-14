@@ -10,6 +10,20 @@ class CalculatorTool(Tool):
     @property
     def description(self) -> str:
         return "Evaluate mathematical expressions."
+    
+    @property
+    def parameters(self):
+        return {
+            "type": "object",
+            "properties": {
+                "expression": {
+                    "type": "string",
+                    "description": "Mathematical expression."
+                }
+            },
+            "required": ["expression"]
+        }
+
 
     def execute(self, arguments: dict) -> str:
 

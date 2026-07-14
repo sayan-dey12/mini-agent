@@ -15,13 +15,19 @@ class GroqProvider(ILLMProvider):
             api_key=api_key,
         )
 
-    def chat(self, messages, model="llama-3.3-70b-versatile"):
+    def chat(self, messages, tools=None, model="llama-3.3-70b-versatile"):
         response = self.client.chat.completions.create(
             model=model,
             messages=messages,
+            tools=tools
         )
-        return response.choices[0].message.content
-    
+        
+        message = response.choices[0].message
+        if message.tool_calls:
+            print("Tool call detected: ", message.tool_calls)
+        else:
+            return message.content
+            
     def stream(self , messages , model="llama-3.3-70b-versatile"):
         response = self.client.chat.completions.create(
             model=model,

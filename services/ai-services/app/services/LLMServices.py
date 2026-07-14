@@ -19,7 +19,7 @@ class LLMService:
 
     def chat(self, messages):
 
-        return self.provider.chat(messages)
+        return self.provider.chat(messages , self.registry.schemas())
     
     def stream(self,messages):
         yield from self.provider.stream(messages)

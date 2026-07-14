@@ -18,3 +18,21 @@ class ToolRegistry:
     def list(self):
 
         return list(self._tools.values())   
+    
+    
+    def schemas(self) -> list[dict]:
+
+        return [
+
+            {
+                "type": "function",
+                "function": {
+                    "name": tool.name,
+                    "description": tool.description,
+                    "parameters": tool.parameters,
+                },
+            }
+
+            for tool in self.list()
+
+        ]

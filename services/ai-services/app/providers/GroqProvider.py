@@ -1,8 +1,12 @@
+from email.mime import message
 import os
 
 from groq import Groq
 from dotenv import load_dotenv
 from app.providers.base import ILLMProvider
+from app.model.ToolCall import ToolCall
+from app.model.ToolFunction import ToolFunction
+from app.model.ProviderMessage import ProviderMessage
 
 load_dotenv()
 
@@ -28,7 +32,26 @@ class GroqProvider(ILLMProvider):
         # else:
         #     return message.content
         
-        return response.choices[0].message
+        message = response.choices[0].message
+        tool_calls = []
+        if message.tool_calls:
+            for call in message.tool_calls:
+                tool_calls.append(
+                    ToolCall(
+                        id=call.id,
+                        type=call.type,
+                        function=ToolFunction(
+                            name=call.function.name,
+                            arguments=call.function.arguments,
+                        ),
+                    )
+                )
+                
+        return ProviderMessage(
+            role = message.role,
+            content = message.content,
+            tool_calls = tool_calls
+        )
             
     def stream(self , messages , model="llama-3.3-70b-versatile"):
         response = self.client.chat.completions.create(

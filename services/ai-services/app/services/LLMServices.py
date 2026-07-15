@@ -21,13 +21,42 @@ class LLMService:
     def chat(self, messages):
 
         message = self.provider.chat(messages , self.registry.schemas())
+        
         if not message.tool_calls:
             return message.content
+        
         tool_call = message.tool_calls[0]
         arguments = json.loads(tool_call.function.arguments)
+        
         result = self.executor.execute(
             tool_call.function.name , arguments
         )
-        return result
+        
+        messages.append(
+            {
+                "role": "assistant",
+                "content": message.content,
+                "tool_calls": [
+                    {
+                        "id": tool_call.id,
+                        "type": "function",
+                        "function": {
+                            "name": tool_call.function.name,
+                            "arguments": tool_call.function.arguments,
+                        },
+                    }
+                ],
+            }
+        )
+        messages.append(
+            {
+                "role": "tool",
+                "tool_call_id": tool_call.id,
+                "content": result,
+            }
+        )
+        final = self.provider.chat(messages , self.registry.schemas())
+        return final.content
+    
     def stream(self,messages):
         yield from self.provider.stream(messages)

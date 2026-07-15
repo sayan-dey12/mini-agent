@@ -1,5 +1,5 @@
 from app.tools.registry import ToolRegistry
-
+from app.model.ToolResult import ToolResult
 
 class ToolExecutor:
 
@@ -11,13 +11,27 @@ class ToolExecutor:
         self,
         tool_name: str,
         arguments: dict,
-    ) -> str:
+    ) -> ToolResult:
 
         tool = self.registry.get(tool_name)
 
         if tool is None:
-            raise ValueError(
-                f"Unknown tool: {tool_name}"
+            return ToolResult(
+                success = False,
+                output = None,
+                error = f"Unknown tool: {tool_name}"
             )
-
-        return tool.execute(arguments)
+            
+        output = tool.execute(arguments)
+        try:
+             return ToolResult(
+                success = True,
+                output = output,
+            ) 
+        except Exception as e:
+            return ToolResult(
+                success = False,
+                output = None,
+                error = str(e)
+            )
+       

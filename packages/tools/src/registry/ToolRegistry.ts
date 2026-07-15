@@ -15,7 +15,7 @@ export class ToolRegistry{
         return this.tools.has(name);
     }
 
-    list():ITool[]{
+    get_all():ITool[]{
         return [...this.tools.values()];
     }
 }

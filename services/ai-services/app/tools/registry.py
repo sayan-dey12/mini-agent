@@ -15,7 +15,7 @@ class ToolRegistry:
 
         return self._tools.get(name)
 
-    def list(self):
+    def get_all(self):
 
         return list(self._tools.values())   
     
@@ -33,6 +33,6 @@ class ToolRegistry:
                 },
             }
 
-            for tool in self.list()
+            for tool in self.get_all()
 
         ]

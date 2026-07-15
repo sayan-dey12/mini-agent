@@ -22,11 +22,13 @@ class GroqProvider(ILLMProvider):
             tools=tools
         )
         
-        message = response.choices[0].message
-        if message.tool_calls:
-            print("Tool call detected: ", message.tool_calls)
-        else:
-            return message.content
+        # message = response.choices[0].message
+        # if message.tool_calls:
+        #     print("Tool call detected: ", message.tool_calls)
+        # else:
+        #     return message.content
+        
+        return response.choices[0].message
             
     def stream(self , messages , model="llama-3.3-70b-versatile"):
         response = self.client.chat.completions.create(

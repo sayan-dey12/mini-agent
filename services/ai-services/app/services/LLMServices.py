@@ -19,7 +19,11 @@ class LLMService:
 
     def chat(self, messages):
 
-        return self.provider.chat(messages , self.registry.schemas())
-    
+        message = self.provider.chat(messages , self.registry.schemas())
+        if not message.tool_calls:
+            return message.content
+        tool_call = message.tool_calls[0]
+        print("Tool call detected: ", tool_call)
+        return "tool calling detected..."    
     def stream(self,messages):
         yield from self.provider.stream(messages)

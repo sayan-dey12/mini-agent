@@ -9,6 +9,7 @@ from app.model.ToolFunction import ToolFunction
 from app.model.ProviderMessage import ProviderMessage
 from app.model.ProviderRequest import ProviderRequest
 from app.model.ProviderResponse import ProviderResponse
+from app.model.ProviderResponse import ProviderResponse
 
 load_dotenv()
 
@@ -49,10 +50,12 @@ class GroqProvider(ILLMProvider):
                     )
                 )
                 
-        return ProviderMessage(
-            role = message.role,
-            content = message.content,
-            tool_calls = tool_calls
+        return ProviderResponse(
+            message = ProviderMessage(
+                role = message.role,
+                content = message.content,
+                tool_calls = tool_calls
+            )
         )
             
     def stream(self , messages , model="llama-3.3-70b-versatile"):

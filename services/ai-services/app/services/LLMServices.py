@@ -4,6 +4,7 @@ from app.tools.executor import ToolExecutor
 from app.tools.builtin.calculator import CalculatorTool
 from app.providers.base import ILLMProvider
 from app.tools.manager import ToolManager
+from app.logging.RuntimeLogger import RuntimeLogger
 
 class LLMService:
 
@@ -22,11 +23,14 @@ class LLMService:
         self.tool_manager = ToolManager(
             self.executor
         )
+        
+        self.logger = RuntimeLogger()
 
         self.engine = ReasoningEngine(
             provider=provider,
             registry=self.registry,
             tool_manager=self.tool_manager,
+            logger = self.logger,
         )
 
     def chat(self, messages):

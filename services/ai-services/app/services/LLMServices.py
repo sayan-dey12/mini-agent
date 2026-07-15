@@ -3,6 +3,7 @@ from app.tools.registry import ToolRegistry
 from app.tools.executor import ToolExecutor
 from app.tools.builtin.calculator import CalculatorTool
 from app.providers.base import ILLMProvider
+import json
 class LLMService:
 
     def __init__(self , provider: ILLMProvider ):
@@ -23,7 +24,10 @@ class LLMService:
         if not message.tool_calls:
             return message.content
         tool_call = message.tool_calls[0]
-        print("Tool call detected: ", tool_call)
-        return "tool calling detected..."    
+        arguments = json.loads(tool_call.function.arguments)
+        result = self.executor.execute(
+            tool_call.function.name , arguments
+        )
+        return result
     def stream(self,messages):
         yield from self.provider.stream(messages)

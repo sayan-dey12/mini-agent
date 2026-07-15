@@ -5,6 +5,8 @@ from app.tools.builtin.calculator import CalculatorTool
 from app.providers.base import ILLMProvider
 import json
 import pprint
+from app.model.ProviderRequest import ProviderRequest
+from app.model.ProviderResponse import ProviderResponse
 class LLMService:
 
     def __init__(self , provider: ILLMProvider ):
@@ -26,7 +28,13 @@ class LLMService:
             # print("\n===== Messages Sent to Groq =====")
             # pprint.pp(messages)
             # print("=================================\n")
-            message = self.provider.chat(messages , self.registry.schemas())
+            
+            request = ProviderRequest(
+                messages=messages,
+                tools=self.registry.schemas(),
+            )
+            response = self.provider.chat(request)
+            message = response.message
             
             # no more tool calls, return the content directly
             if not message.tool_calls:

@@ -7,6 +7,8 @@ from app.providers.base import ILLMProvider
 from app.model.ToolCall import ToolCall
 from app.model.ToolFunction import ToolFunction
 from app.model.ProviderMessage import ProviderMessage
+from app.model.ProviderRequest import ProviderRequest
+from app.model.ProviderResponse import ProviderResponse
 
 load_dotenv()
 
@@ -19,11 +21,11 @@ class GroqProvider(ILLMProvider):
             api_key=api_key,
         )
 
-    def chat(self, messages, tools=None, model="llama-3.3-70b-versatile"):
+    def chat(self, request: ProviderRequest) -> ProviderResponse:
         response = self.client.chat.completions.create(
-            model=model,
-            messages=messages,
-            tools=tools
+            model=request.model or "llama-3.3-70b-versatile" , 
+            messages=request.messages,
+            tools=request.tools
         )
         
         # message = response.choices[0].message

@@ -1,5 +1,7 @@
 import logging
 
+from app.logging.LogEvent import LogEvent
+
 
 class RuntimeLogger:
 
@@ -21,22 +23,76 @@ class RuntimeLogger:
 
             self.logger.setLevel(logging.INFO)
 
-    def info(self, message: str):
-        self.logger.info(message)
+    def log(
+        self,
+        event: LogEvent,
+    ) -> None:
 
-    def warning(self, message: str):
+        metadata = ""
+
+        if event.metadata:
+
+            metadata = " | " + ", ".join(
+                f"{key}={value}"
+                for key, value in event.metadata.items()
+            )
+
+        self.logger.info(
+            f"[{event.category}] {event.message}{metadata}"
+        )
+
+    def reasoning(
+        self,
+        message: str,
+        **metadata,
+    ) -> None:
+
+        self.log(
+            LogEvent(
+                category="Reasoning",
+                message=message,
+                metadata=metadata,
+            )
+        )
+
+    def provider(
+        self,
+        message: str,
+        **metadata,
+    ) -> None:
+
+        self.log(
+            LogEvent(
+                category="Provider",
+                message=message,
+                metadata=metadata,
+            )
+        )
+
+    def tool(
+        self,
+        message: str,
+        **metadata,
+    ) -> None:
+
+        self.log(
+            LogEvent(
+                category="Tool",
+                message=message,
+                metadata=metadata,
+            )
+        )
+
+    def warning(
+        self,
+        message: str,
+    ) -> None:
+
         self.logger.warning(message)
 
-    def error(self, message: str):
+    def error(
+        self,
+        message: str,
+    ) -> None:
+
         self.logger.error(message)
-
-    # ---------- Runtime Categories ----------
-
-    def reasoning(self, message: str):
-        self.logger.info(f"[Reasoning] {message}")
-
-    def provider(self, message: str):
-        self.logger.info(f"[Provider] {message}")
-
-    def tool(self, message: str):
-        self.logger.info(f"[Tool] {message}")

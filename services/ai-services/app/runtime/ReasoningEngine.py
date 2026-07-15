@@ -31,8 +31,11 @@ class ReasoningEngine:
         
         self.logger.reasoning("Reasoning started.")          #logger
 
-        for iteration in range(self.MAX_ITERATIONS):
-            self.logger.reasoning(f"Iteration {iteration}")  #logger
+        for iteration in range(1,self.MAX_ITERATIONS+1):
+            self.logger.reasoning(
+                "Reasoning iteration",
+                iteration=iteration,
+            )  #logger
             request = ProviderRequest(
                 messages=messages,
                 tools=self.registry.schemas(),
@@ -46,8 +49,9 @@ class ReasoningEngine:
                 time.perf_counter() - start
             ) * 1000
 
-            self.logger.provider(                                   #logger
-                f"Response received ({elapsed:.2f} ms)"
+            self.logger.provider(
+                "Response received",
+                latency=f"{elapsed:.2f} ms",        #logger
             )
 
             message = response.message
@@ -73,7 +77,8 @@ class ReasoningEngine:
                 )
                 
                 self.logger.tool(
-                    f"Executing '{tool_call.function.name}'"            #logger
+                    "Executing tool",               #logger
+                    tool=tool_call.function.name,
                 )
 
                 result = self.tool_manager.execute(
@@ -82,7 +87,8 @@ class ReasoningEngine:
                 )
                 
                 self.logger.tool(
-                    f"Finished '{tool_call.function.name}'"     #logger
+                    "Tool execution finished",          #logger
+                    tool=tool_call.function.name,
                 )
 
                 messages.append(

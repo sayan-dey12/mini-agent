@@ -6,7 +6,8 @@ from app.providers.base import ILLMProvider
 from app.runtime.ProviderRequest import ProviderRequest
 from app.tools.executor import ToolExecutor
 from app.tools.registry import ToolRegistry
-
+from app.runtime.MessageFactory import MessageFactory
+from app.tools.manager import ToolManager
 
 class ReasoningEngine:
 
@@ -16,11 +17,11 @@ class ReasoningEngine:
         self,
         provider: ILLMProvider,
         registry: ToolRegistry,
-        executor: ToolExecutor,
+        tool_manager: ToolManager,
     ):
         self.provider = provider
         self.registry = registry
-        self.executor = executor
+        self.tool_manager = tool_manager
 
     def run(self, messages: list[dict]) -> str:
 
@@ -39,21 +40,7 @@ class ReasoningEngine:
                 return message.content or ""
 
             messages.append(
-                {
-                    "role": "assistant",
-                    "content": message.content,
-                    "tool_calls": [
-                        {
-                            "id": tool_call.id,
-                            "type": tool_call.type,
-                            "function": {
-                                "name": tool_call.function.name,
-                                "arguments": tool_call.function.arguments,
-                            },
-                        }
-                        for tool_call in message.tool_calls
-                    ],
-                }
+                MessageFactory.assistant_tool_call(message)
             )
 
             for tool_call in message.tool_calls:
@@ -62,21 +49,16 @@ class ReasoningEngine:
                     tool_call.function.arguments
                 )
 
-                result = self.executor.execute(
+                result = self.tool_manager.execute(
                     tool_call.function.name,
                     arguments,
                 )
 
                 messages.append(
-                    {
-                        "role": "tool",
-                        "tool_call_id": tool_call.id,
-                        "content": (
-                            result.output
-                            if result.success
-                            else result.error
-                        ),
-                    }
+                    MessageFactory.tool_result(
+                        tool_call=tool_call,
+                        result=result
+                    )
                 )
 
         raise RuntimeError(

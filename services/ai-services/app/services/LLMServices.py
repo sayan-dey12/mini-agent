@@ -4,6 +4,7 @@ from app.tools.executor import ToolExecutor
 from app.tools.builtin.calculator import CalculatorTool
 from app.providers.base import ILLMProvider
 import json
+import pprint
 class LLMService:
 
     def __init__(self , provider: ILLMProvider ):
@@ -22,6 +23,9 @@ class LLMService:
 
         MAX_ITERATIONS = 5
         for _ in range(MAX_ITERATIONS):
+            # print("\n===== Messages Sent to Groq =====")
+            # pprint.pp(messages)
+            # print("=================================\n")
             message = self.provider.chat(messages , self.registry.schemas())
             
             # no more tool calls, return the content directly

@@ -20,43 +20,52 @@ class LLMService:
 
     def chat(self, messages):
 
-        message = self.provider.chat(messages , self.registry.schemas())
-        
-        if not message.tool_calls:
-            return message.content
-        
-        tool_call = message.tool_calls[0]
-        arguments = json.loads(tool_call.function.arguments)
-        
-        result = self.executor.execute(
-            tool_call.function.name , arguments
-        )
-        
-        messages.append(
-            {
-                "role": "assistant",
-                "content": message.content,
-                "tool_calls": [
+        MAX_ITERATIONS = 5
+        for _ in range(MAX_ITERATIONS):
+            message = self.provider.chat(messages , self.registry.schemas())
+            
+            # no more tool calls, return the content directly
+            if not message.tool_calls:
+                return message.content
+            
+            #save assistant message with tool calls
+            messages.append(
                     {
-                        "id": tool_call.id,
-                        "type": "function",
-                        "function": {
-                            "name": tool_call.function.name,
-                            "arguments": tool_call.function.arguments,
-                        },
+                        "role": "assistant",
+                        "content": message.content,
+                        "tool_calls": [
+                            {
+                                "id": tool_call.id,
+                                "type": "function",
+                                "function": {
+                                    "name": tool_call.function.name,
+                                    "arguments": tool_call.function.arguments,
+                                },
+                            }
+                            for tool_call in message.tool_calls
+                        ],
                     }
-                ],
-            }
+                )
+            
+            #execute every requested tools
+            for tool_call in message.tool_calls:
+                arguments = json.loads(tool_call.function.arguments)
+                
+                result = self.executor.execute(
+                    tool_call.function.name , arguments
+                )
+                
+                messages.append(
+                    {
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "content": result,
+                    }
+                )
+        
+        raise RuntimeError(
+            "Maximum tool-calling iterations exceeded."
         )
-        messages.append(
-            {
-                "role": "tool",
-                "tool_call_id": tool_call.id,
-                "content": result,
-            }
-        )
-        final = self.provider.chat(messages , self.registry.schemas())
-        return final.content
-    
+        
     def stream(self,messages):
         yield from self.provider.stream(messages)

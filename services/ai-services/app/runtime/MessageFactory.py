@@ -38,6 +38,6 @@ class MessageFactory:
             "content": (
                 str(result.output)
                 if result.success
-                else result.error
+                else f"Tool execution failed: {result.error}"
             ),
         }

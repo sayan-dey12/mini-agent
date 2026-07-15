@@ -6,7 +6,10 @@ class CreateDirectoryTool(Tool):
 
     name = "create_directory"
 
-    description = "Create a directory."
+    description = (
+        "Create a directory (folder). "
+        "Never use this tool to create files."
+    )
 
     parameters = {
         "type": "object",

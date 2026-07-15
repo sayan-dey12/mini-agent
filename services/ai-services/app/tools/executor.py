@@ -21,9 +21,9 @@ class ToolExecutor:
                 output = None,
                 error = f"Unknown tool: {tool_name}"
             )
-            
-        output = tool.execute(arguments)
         try:
+             output = tool.execute(arguments)
+             
              return ToolResult(
                 success = True,
                 output = output,

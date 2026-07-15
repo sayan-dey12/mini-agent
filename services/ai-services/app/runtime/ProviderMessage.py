@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from app.model.ToolCall import ToolCall
+from app.runtime.ToolCall import ToolCall
 
 
 @dataclass

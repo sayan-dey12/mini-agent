@@ -4,12 +4,12 @@ import os
 from groq import Groq
 from dotenv import load_dotenv
 from app.providers.base import ILLMProvider
-from app.model.ToolCall import ToolCall
-from app.model.ToolFunction import ToolFunction
-from app.model.ProviderMessage import ProviderMessage
-from app.model.ProviderRequest import ProviderRequest
-from app.model.ProviderResponse import ProviderResponse
-from app.model.ProviderResponse import ProviderResponse
+from app.runtime.ToolCall import ToolCall
+from app.runtime.ToolFunction import ToolFunction
+from app.runtime.ProviderMessage import ProviderMessage
+from app.runtime.ProviderRequest import ProviderRequest
+from app.runtime.ProviderResponse import ProviderResponse
+from app.runtime.ProviderResponse import ProviderResponse
 
 load_dotenv()
 

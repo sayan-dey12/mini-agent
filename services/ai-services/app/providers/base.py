@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from app.model.ProviderRequest import ProviderRequest
-from app.model.ProviderResponse import ProviderResponse
+from app.runtime.ProviderRequest import ProviderRequest
+from app.runtime.ProviderResponse import ProviderResponse
 
 class ILLMProvider(ABC):
 

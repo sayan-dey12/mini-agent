@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from app.model.ProviderMessage import ProviderMessage
+from app.runtime.ProviderMessage import ProviderMessage
 
 
 @dataclass

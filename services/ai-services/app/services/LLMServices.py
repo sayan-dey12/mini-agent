@@ -5,8 +5,8 @@ from app.tools.builtin.calculator import CalculatorTool
 from app.providers.base import ILLMProvider
 import json
 import pprint
-from app.model.ProviderRequest import ProviderRequest
-from app.model.ProviderResponse import ProviderResponse
+from app.runtime.ProviderRequest import ProviderRequest
+from app.runtime.ProviderResponse import ProviderResponse
 class LLMService:
 
     def __init__(self , provider: ILLMProvider ):

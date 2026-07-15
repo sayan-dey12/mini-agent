@@ -1,5 +1,5 @@
 from app.tools.registry import ToolRegistry
-from app.model.ToolResult import ToolResult
+from app.runtime.ToolResult import ToolResult
 
 class ToolExecutor:
 

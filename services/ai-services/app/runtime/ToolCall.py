@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from app.model.ToolFunction import ToolFunction
+from app.runtime.ToolFunction import ToolFunction
 
 
 @dataclass

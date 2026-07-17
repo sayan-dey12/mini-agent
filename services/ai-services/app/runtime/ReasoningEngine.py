@@ -115,6 +115,11 @@ class ReasoningEngine:
             message = response.message
 
             if not message.tool_calls:
+                messages.append({
+                    "role": "assistant",
+                    "content": message.content,
+                })
+                 
                 self.logger.reasoning(
                     "No tool calls detected."       #logger
                 )
@@ -175,6 +180,8 @@ class ReasoningEngine:
             content_parts: list[str] = []
 
             tool_calls: list[ToolCall] = []
+            
+            content = "".join(content_parts)
 
             for chunk in self.provider.stream(request):
 
@@ -195,11 +202,15 @@ class ReasoningEngine:
                         chunk.tool_calls
                     )
 
-                content = "".join(content_parts)
             #
             # No tool calls
             #
             if not tool_calls:
+                
+                messages.append({
+                    "role": "assistant",
+                    "content": content,
+                })
 
                 self.logger.reasoning(
                     "Streaming finished."

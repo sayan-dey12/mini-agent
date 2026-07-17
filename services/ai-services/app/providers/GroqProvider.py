@@ -69,6 +69,8 @@ class GroqProvider(ILLMProvider):
         for chunk in response:
 
             choice = chunk.choices[0]
+            # print("finish_reason:", choice.finish_reason)
+            # print("delta:", choice.delta)
             delta = choice.delta
 
             # Stream normal text
@@ -76,6 +78,29 @@ class GroqProvider(ILLMProvider):
                 yield ProviderChunk(
                     content=delta.content,
                 )
+                
+            # for tool call
+            if delta.tool_calls:
+
+                tool_calls = []
+
+                for call in delta.tool_calls:
+
+                    tool_calls.append(
+                        ToolCall(
+                            id=call.id,
+                            type=call.type,
+                            function=ToolFunction(
+                                name=call.function.name,
+                                arguments=call.function.arguments,
+                            ),
+                        )
+                    )
+
+                yield ProviderChunk(
+                    tool_calls=tool_calls,
+                )
+
 
             # End of generation
             if choice.finish_reason:

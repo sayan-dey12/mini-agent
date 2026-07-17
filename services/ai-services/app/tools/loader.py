@@ -59,5 +59,5 @@ class ToolLoader:
                     )
                     self.logger.tool(
                         "Loaded tool",
-                        tool=obj.name
+                        tool=obj().name
                     )

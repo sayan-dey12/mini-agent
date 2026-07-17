@@ -160,6 +160,11 @@ class ReasoningEngine:
                 "Streaming iteration",
                 iteration=iteration,
             )
+            
+            # print("=" * 80)
+            # print("TOOLS SENT TO GROQ:")
+            # print(json.dumps(self.registry.schemas(), indent=2))
+            # print("=" * 80)
 
             request = ProviderRequest(
                 messages=messages,

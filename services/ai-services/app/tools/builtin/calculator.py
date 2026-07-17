@@ -9,7 +9,13 @@ class CalculatorTool(Tool):
 
     @property
     def description(self) -> str:
-        return "Evaluate mathematical expressions."
+        return (
+            "Use this tool whenever the user asks to perform "
+            "any arithmetic or mathematical calculation. "
+            "The input must be a single arithmetic expression "
+            "as a string. "
+            "Return only the numerical result."
+        )
     
     @property
     def parameters(self):

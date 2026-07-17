@@ -1,6 +1,5 @@
 import { Command } from "commander";
 import { HelloCommand } from "./commands/HelloCommand.js";
-import { InduCommand } from "./commands/Indu.js";
 import { TestCommand } from "./commands/TestCommand.js";
 import { ChatCommand } from "./commands/ChatCommand.js";
 
@@ -17,13 +16,6 @@ program
   .action(() => {
     const command = new HelloCommand();
     command.execute();
-  });
-
-  program
-  .command("indu")
-  .description("A special message for Pomi ❤️")
-  .action(() => {
-    new InduCommand().execute();
   });
 
   program

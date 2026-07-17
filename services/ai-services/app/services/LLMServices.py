@@ -5,24 +5,21 @@ from app.tools.builtin.calculator import CalculatorTool
 from app.providers.base import ILLMProvider
 from app.tools.manager import ToolManager
 from app.logging.RuntimeLogger import RuntimeLogger
-from app.tools.builtin.filesystem.ReadFileTool import ReadFileTool
-from app.tools.builtin.filesystem.WriteFileTool import WriteFileTool
-from app.tools.builtin.filesystem.ListDirectoryTool import ListDirectoryTool
-from app.tools.builtin.filesystem.CreateDirectoryTool import CreateDirectoryTool
-
+from app.tools.loader import ToolLoader
 class LLMService:
 
     def __init__(self, provider: ILLMProvider):
 
         self.registry = ToolRegistry()
+        ToolLoader().load( self.registry )
 
-        self.registry.register(
-            CalculatorTool()
-        )
-        self.registry.register(ReadFileTool())
-        self.registry.register(WriteFileTool())
-        self.registry.register(ListDirectoryTool())
-        self.registry.register(CreateDirectoryTool())
+        # self.registry.register(
+        #     CalculatorTool()
+        # )
+        # self.registry.register(ReadFileTool())
+        # self.registry.register(WriteFileTool())
+        # self.registry.register(ListDirectoryTool())
+        # self.registry.register(CreateDirectoryTool())
 
         self.executor = ToolExecutor(
             self.registry

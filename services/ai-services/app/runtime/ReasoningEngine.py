@@ -128,12 +128,11 @@ class ReasoningEngine:
                 MessageFactory.assistant_tool_call(message)
             )
 
-            list(
-                self._execute_tool_calls(
-                    messages=messages,
-                    tool_calls=message.tool_calls,
-                )
-            )
+            for _ in self._execute_tool_calls(
+                messages=messages,
+                tool_calls=message.tool_calls,
+            ):
+                pass
                 
         self.logger.error(
             "Maximum reasoning iterations exceeded."            #logger
@@ -168,15 +167,17 @@ class ReasoningEngine:
                 stream=True,
             )
 
-            accumulated_text = ""
+            content_parts: list[str] = []
 
-            tool_calls = []
+            tool_calls: list[ToolCall] = []
 
             for chunk in self.provider.stream(request):
 
                 if chunk.content:
 
-                    accumulated_text += chunk.content
+                    content_parts.append(
+                        chunk.content
+                    )
 
                     yield StreamEvent(
                         type=StreamEventType.TEXT,
@@ -189,6 +190,7 @@ class ReasoningEngine:
                         chunk.tool_calls
                     )
 
+                content = "".join(content_parts)
             #
             # No tool calls
             #
@@ -212,7 +214,7 @@ class ReasoningEngine:
                 MessageFactory.assistant_tool_call(
                     ProviderMessage(
                         role="assistant",
-                        content=accumulated_text,
+                        content=content,
                         tool_calls=tool_calls,
                     )
                 )

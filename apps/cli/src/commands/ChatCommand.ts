@@ -34,24 +34,24 @@ export class ChatCommand {
             
             // for streaming response // 
 
-            // process.stdout.write("AI  > ");
+            process.stdout.write("AI  > ");
 
-            // let assistantResponse = "";
-            // for await (const chunk of agent.stream({messages})){
-            //     process.stdout.write(chunk);
-            //     assistantResponse += chunk;
-            // }
+            let assistantResponse = "";
+            for await (const chunk of agent.stream({messages})){
+                process.stdout.write(chunk);
+                assistantResponse += chunk;
+            }
 
-            // console.log("\n");
-            // conversation.addAssistantMessage(assistantResponse);
+            console.log("\n");
+            conversation.addAssistantMessage(assistantResponse);
             
             //for execute function -> all response together
 
-            const response = await agent.execute({
-                messages,                                   
-            });
-            console.log(`AI  > ${response.text}\n`);
-            conversation.addAssistantMessage(response.text);
+            // const response = await agent.execute({
+            //     messages,                                   
+            // });
+            // console.log(`AI  > ${response.text}\n`);
+            // conversation.addAssistantMessage(response.text);
 
         
 

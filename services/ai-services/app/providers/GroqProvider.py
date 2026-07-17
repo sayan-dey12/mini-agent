@@ -63,7 +63,7 @@ class GroqProvider(ILLMProvider):
             model=request.model or "llama-3.3-70b-versatile",
             messages=request.messages,
             stream=True,
-            tool=request.tools
+            tools=request.tools
             
         )
         for chunk in response:

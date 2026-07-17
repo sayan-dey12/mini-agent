@@ -5,7 +5,7 @@ from app.schemas.chat import ChatResponse
 from app.providers.GroqProvider import GroqProvider
 
 from app.services.LLMServices import LLMService
-
+from app.runtime.StreamEventSerializer import StreamEventSerializer
 
 app = FastAPI()
 
@@ -41,10 +41,10 @@ async def stream_chat(request: ChatRequest):
             message.model_dump()
             for message in request.messages
         ]
-
-        yield from llm.stream(messages)
+        for event in llm.stream(messages):
+            yield StreamEventSerializer.serialize(event)
 
     return StreamingResponse(
         generate(),
-        media_type="text/plain"
+        media_type="application/x-ndjson"
     )

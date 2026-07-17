@@ -1,7 +1,7 @@
 import type { IProvider } from "../interfaces/IProvider.js";
 import type { ProviderRequest } from "../types/ProviderRequest.js";
 import type { ProviderResponse } from "../types/ProviderResponse.js";
-
+import type { StreamEvent } from "@mini-agent/shared";
 export class PythonProvider implements IProvider {
     constructor(
         private readonly baseUrl: string
@@ -70,7 +70,7 @@ export class PythonProvider implements IProvider {
 
     async *stream(
         request: ProviderRequest
-    ): AsyncIterable<string> {
+    ): AsyncIterable<StreamEvent> {
 
         const controller = new AbortController();
 
@@ -110,6 +110,8 @@ export class PythonProvider implements IProvider {
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
 
+            let buffer = "";
+
             while (true) {
 
                 const { done, value } =
@@ -119,10 +121,37 @@ export class PythonProvider implements IProvider {
                     break;
                 }
 
-                yield decoder.decode(
+                buffer += decoder.decode(
                     value,
                     { stream: true }
                 );
+
+                const lines = buffer.split("\n");
+
+                // keep the unfinished JSON for the next chunk
+                buffer = lines.pop() ?? "";
+
+                for (const line of lines) {
+
+                    if (!line.trim()) {
+                        continue;
+                    }
+
+                    yield JSON.parse(
+                        line
+                    ) as StreamEvent;
+
+                }
+
+            }
+            // flush remaining buffered data
+            buffer += decoder.decode();
+
+            if (buffer.trim()) {
+
+                yield JSON.parse(
+                    buffer
+                ) as StreamEvent;
 
             }
 

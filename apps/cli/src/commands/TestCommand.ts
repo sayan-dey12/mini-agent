@@ -1,5 +1,5 @@
 //import { Agent } from "@mini-agent/agents";
-import { AgentFactory, type AgentRequest } from "@mini-agent/agents";
+import type { AgentRequest } from "@mini-agent/agents";
 //import { MockProvider } from "@mini-agent/providers";
 //import {AgentFactory} from "@mini-agent/agents";
 import { ApplicationContainer } from "@mini-agent/core";

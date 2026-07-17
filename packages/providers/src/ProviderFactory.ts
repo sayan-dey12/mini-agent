@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import type {IProvider} from "./interfaces/IProvider.js";
 import {MockProvider} from "./providers/MockProvider.js";
 

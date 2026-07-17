@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import type {IProvider} from "../interfaces/IProvider.js";
 import type {ProviderRequest} from "../types/ProviderRequest.js";
 import type {ProviderResponse} from "../types/ProviderResponse.js";

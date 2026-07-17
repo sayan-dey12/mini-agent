@@ -10,7 +10,10 @@ from app.tools.registry import ToolRegistry
 from app.runtime.MessageFactory import MessageFactory
 from app.tools.manager import ToolManager
 from app.logging.RuntimeLogger import RuntimeLogger
-
+from app.runtime.StreamEvent import StreamEvent
+from app.runtime.StreamEventType import StreamEventType
+from app.runtime.ProviderMessage import ProviderMessage
+from app.runtime.ToolCall import ToolCall
 class ReasoningEngine:
 
     MAX_ITERATIONS = 5
@@ -26,6 +29,61 @@ class ReasoningEngine:
         self.registry = registry
         self.tool_manager = tool_manager
         self.logger =logger
+
+    def _execute_tool_calls(
+        self,
+        messages: list[dict],
+        tool_calls: list[ToolCall],
+        streaming: bool = False,
+    ):
+        """
+        Executes all tool calls.
+
+        If streaming=True, StreamEvents are yielded.
+        """
+
+        for tool_call in tool_calls:
+
+            if streaming:
+                yield StreamEvent(
+                    type=StreamEventType.TOOL_START,
+                    data=tool_call.function.name,
+                )
+
+            arguments = json.loads(
+                tool_call.function.arguments
+            )
+
+            self.logger.tool(
+                "Executing tool",
+                tool=tool_call.function.name,
+            )
+
+            result = self.tool_manager.execute(
+                tool_call.function.name,
+                arguments,
+            )
+
+            self.logger.tool(
+                "Tool execution finished",
+                tool=tool_call.function.name,
+            )
+
+            if streaming:
+                yield StreamEvent(
+                    type=StreamEventType.TOOL_END,
+                    data={
+                        "tool": tool_call.function.name,
+                        "success": result.success,
+                    },
+                )
+
+            messages.append(
+                MessageFactory.tool_result(
+                    tool_call,
+                    result,
+                )
+            )
 
     def run(self, messages: list[dict]) -> str:
         
@@ -70,37 +128,104 @@ class ReasoningEngine:
                 MessageFactory.assistant_tool_call(message)
             )
 
-            for tool_call in message.tool_calls:
-
-                arguments = json.loads(
-                    tool_call.function.arguments
+            list(
+                self._execute_tool_calls(
+                    messages=messages,
+                    tool_calls=message.tool_calls,
                 )
-                
-                self.logger.tool(
-                    "Executing tool",               #logger
-                    tool=tool_call.function.name,
-                )
-
-                result = self.tool_manager.execute(
-                    tool_call.function.name,
-                    arguments,
-                )
-                
-                self.logger.tool(
-                    "Tool execution finished",          #logger
-                    tool=tool_call.function.name,
-                )
-
-                messages.append(
-                    MessageFactory.tool_result(
-                        tool_call=tool_call,
-                        result=result
-                    )
-                )
+            )
                 
         self.logger.error(
             "Maximum reasoning iterations exceeded."            #logger
         )
+
+        raise RuntimeError(
+            "Maximum reasoning iterations exceeded."
+        )
+        
+    def stream(
+        self,
+        messages: list[dict],
+    ):
+
+        self.logger.reasoning(
+            "Streaming reasoning started."
+        )
+
+        for iteration in range(
+            1,
+            self.MAX_ITERATIONS + 1,
+        ):
+
+            self.logger.reasoning(
+                "Streaming iteration",
+                iteration=iteration,
+            )
+
+            request = ProviderRequest(
+                messages=messages,
+                tools=self.registry.schemas(),
+                stream=True,
+            )
+
+            accumulated_text = ""
+
+            tool_calls = []
+
+            for chunk in self.provider.stream(request):
+
+                if chunk.content:
+
+                    accumulated_text += chunk.content
+
+                    yield StreamEvent(
+                        type=StreamEventType.TEXT,
+                        data=chunk.content,
+                    )
+
+                if chunk.tool_calls:
+
+                    tool_calls.extend(
+                        chunk.tool_calls
+                    )
+
+            #
+            # No tool calls
+            #
+            if not tool_calls:
+
+                self.logger.reasoning(
+                    "Streaming finished."
+                )
+
+                yield StreamEvent(
+                    type=StreamEventType.DONE,
+                    data=None,
+                )
+
+                return
+
+            #
+            # Add assistant message
+            #
+            messages.append(
+                MessageFactory.assistant_tool_call(
+                    ProviderMessage(
+                        role="assistant",
+                        content=accumulated_text,
+                        tool_calls=tool_calls,
+                    )
+                )
+            )
+
+            #
+            # Execute every tool
+            #
+            yield from self._execute_tool_calls(
+                messages=messages,
+                tool_calls=tool_calls,
+                streaming=True,
+            )
 
         raise RuntimeError(
             "Maximum reasoning iterations exceeded."

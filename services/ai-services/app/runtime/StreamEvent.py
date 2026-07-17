@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Any, Literal
-
+from app.runtime.StreamEventType import StreamEventType
 
 @dataclass
 class StreamEvent:
@@ -13,13 +13,6 @@ class StreamEvent:
     etc. consume these events.
     """
 
-    type: Literal[
-        "text",
-        "tool_start",
-        "tool_end",
-        "status",
-        "error",
-        "done",
-    ]
+    type: StreamEventType
 
     data: Any

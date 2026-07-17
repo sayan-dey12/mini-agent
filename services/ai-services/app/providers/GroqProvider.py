@@ -9,7 +9,7 @@ from app.runtime.ToolFunction import ToolFunction
 from app.runtime.ProviderMessage import ProviderMessage
 from app.runtime.ProviderRequest import ProviderRequest
 from app.runtime.ProviderResponse import ProviderResponse
-from app.runtime.ProviderResponse import ProviderResponse
+from app.runtime.ProviderChunk import ProviderChunk
 
 load_dotenv()
 
@@ -58,14 +58,27 @@ class GroqProvider(ILLMProvider):
             )
         )
             
-    def stream(self , messages , model="llama-3.3-70b-versatile"):
+    def stream(self , request: ProviderRequest):
         response = self.client.chat.completions.create(
-            model=model,
-            messages=messages,
-            stream=True
+            model=request.model or "llama-3.3-70b-versatile",
+            messages=request.messages,
+            stream=True,
+            tool=request.tools
+            
         )
         for chunk in response:
-            delta = chunk.choices[0].delta.content
-            if delta:
-                yield delta
-        
+
+            choice = chunk.choices[0]
+            delta = choice.delta
+
+            # Stream normal text
+            if delta.content:
+                yield ProviderChunk(
+                    content=delta.content,
+                )
+
+            # End of generation
+            if choice.finish_reason:
+                yield ProviderChunk(
+                    finish_reason=choice.finish_reason,
+                )

@@ -12,6 +12,8 @@ class WriteFileTool(Tool):
         "Create a text file or overwrite an existing text file. "
         "Use this tool whenever the user asks to create, edit, "
         "or save a file."
+        "Create or overwrite a text file. If parent directories already exist, use this tool directly."
+        "Do not call create_directory unless the directory itself does not exist."
     )
 
     parameters = {

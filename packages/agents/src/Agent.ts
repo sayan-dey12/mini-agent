@@ -4,6 +4,7 @@ import type {AgentResponse} from "./types/AgentResponse.js";
 
 import type {IProvider} from "@mini-agent/providers";
 import {PromptBuilder} from "./prompt/PromptBuilder.js";
+import type { StreamEvent } from "@mini-agent/shared";
 export class Agent implements IAgent{
     constructor(
         private provider: IProvider,
@@ -20,17 +21,17 @@ export class Agent implements IAgent{
     }
     async *stream(
         request: AgentRequest
-    ): AsyncIterable<string> {
+    ): AsyncIterable<StreamEvent> {
 
         const prompt = this.promptBuilder.build(request);
 
         for await (
-            const chunk of this.provider.stream({
+            const event of this.provider.stream({
                 messages: prompt,
             })
         ) {
 
-            yield chunk;
+            yield event;
 
         }
 

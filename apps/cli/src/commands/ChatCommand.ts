@@ -37,15 +37,35 @@ export class ChatCommand {
             process.stdout.write("AI  > ");
 
             let assistantResponse = "";
-            for await (const chunk of agent.stream({messages})){
-                process.stdout.write(chunk);
-                assistantResponse += chunk;
+            for await (const event of agent.stream({messages})){
+                switch(event.type){
+                    case "text":
+                        process.stdout.write(event.data as string);
+                        assistantResponse += event.data as string;
+                        break;
+
+                    case "tool_start":
+                        console.log(
+                            `\n⚙ ${event.data as string}`
+                        );
+                        break;
+
+                    case "tool_end":
+                        console.log(
+                            `\n✓ ${(event.data as {tool: string}).tool}`
+                        );
+                        break;
+
+                    case "done":
+                        console.log();
+                        break;
+                    }
             }
 
             console.log("\n");
             conversation.addAssistantMessage(assistantResponse);
             
-            //for execute function -> all response together
+            //for execute function -> all response together//
 
             // const response = await agent.execute({
             //     messages,                                   

@@ -4,6 +4,7 @@ import { stdin, stdout } from "node:process";
 import { ApplicationContainer } from "@mini-agent/core";
 import type { ChatMessage } from "@mini-agent/shared";
 import {Conversation} from "@mini-agent/agents";
+import { log } from "node:console";
 
 export class ChatCommand {
 
@@ -32,49 +33,67 @@ export class ChatCommand {
             conversation.addUserMessage(input);
             const messages: ChatMessage[] = conversation.getMessages();
             
-            // for streaming response // 
-            //-----------------------------------------------------------//
-            // process.stdout.write("AI  > ");
-
-            // let assistantResponse = "";
-            // for await (const event of agent.stream({messages})){
-            //     switch(event.type){
-            //         case "text":
-            //             process.stdout.write(event.data as string);
-            //             assistantResponse += event.data as string;
-            //             break;
-
-            //         case "tool_start":
-            //             console.log(
-            //                 `\n⚙ ${event.data as string}`
-            //             );
-            //             break;
-
-            //         case "tool_end":
-            //             console.log(
-            //                 `\n✓ ${(event.data as {tool: string}).tool}`
-            //             );
-            //             break;
-
-            //         case "done":
-            //             console.log();
-            //             break;
-            //         }
-            // }
-            // console.log("\n");
-            // conversation.addAssistantMessage(assistantResponse);
             
-            //-------------------------------------------------------//
+            try {
+
+                 // for streaming response // 
+                //-----------------------------------------------------------//
+                // process.stdout.write("AI  > ");
+
+                // let assistantResponse = "";
+                // for await (const event of agent.stream({messages})){
+                //     switch(event.type){
+                //         case "text":
+                //             process.stdout.write(event.data as string);
+                //             assistantResponse += event.data as string;
+                //             break;
+
+                //         case "tool_start":
+                //             console.log(
+                //                 `\n⚙ ${event.data as string}`
+                //             );
+                //             break;
+
+                //         case "tool_end":
+                //             console.log(
+                //                 `\n✓ ${(event.data as {tool: string}).tool}`
+                //             );
+                //             break;
+
+                //         case "done":
+                //             console.log();
+                //             break;
+                //         }
+                // }
+                // console.log("\n");
+                // conversation.addAssistantMessage(assistantResponse);
+                
+                //-------------------------------------------------------//
 
 
-            //for execute function -> all response together//
+                //for execute function -> all response together//
 
-            const response = await agent.execute({
-                messages,                                   
-            });
-            console.log(`AI  > ${response.text}\n`);
-            conversation.addAssistantMessage(response.text);
+                const response = await agent.execute({
+                    messages,                                   
+                });
+                console.log(`AI  > ${response.text}\n`);
+                conversation.addAssistantMessage(response.text);
 
+                    
+            } catch (error) {
+
+                console.error('\n❌ AI service error');
+                if (error instanceof Error){
+                    console.log("\nError message: ",error.message);
+                }
+                console.log("\nPlease try again...\n");
+
+                conversation.removeLastMessage();
+                continue;
+                
+            }
+
+           
         
 
         }

@@ -180,8 +180,6 @@ class ReasoningEngine:
             content_parts: list[str] = []
 
             tool_calls: list[ToolCall] = []
-            
-            content = "".join(content_parts)
 
             for chunk in self.provider.stream(request):
 
@@ -201,6 +199,8 @@ class ReasoningEngine:
                     tool_calls.extend(
                         chunk.tool_calls
                     )
+                    
+            content = "".join(content_parts)
 
             #
             # No tool calls

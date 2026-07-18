@@ -27,3 +27,7 @@ coverage/
 
 #fun files
 ./apps/cli/src/commands/Indu.ts
+
+#write files
+writer.py
+project_dump.txt

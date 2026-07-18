@@ -87,6 +87,9 @@ export class ChatCommand {
                     console.log("\nError message: ",error.message);
                 }
                 console.log("\nPlease try again...\n");
+
+                conversation.removeLastMessage();
+                continue;
                 
             }
 

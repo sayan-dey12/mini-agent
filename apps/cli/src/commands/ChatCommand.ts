@@ -5,7 +5,7 @@ import { ApplicationContainer } from "@mini-agent/core";
 import type { ChatMessage } from "@mini-agent/shared";
 import {Conversation} from "@mini-agent/agents";
 
-import {confirm,cancel,isCancel, select} from "@clack/prompts"
+import {isCancel, select , text} from "@clack/prompts"
 export class ChatCommand {
 
     async execute(): Promise<void> {
@@ -29,16 +29,19 @@ export class ChatCommand {
             process.exit(0);
         }
         
-        const rl = readline.createInterface({
-            input: stdin,
-            output: stdout,
-        });
+        // const rl = readline.createInterface({
+        //     input: stdin,
+        //     output: stdout,
+        // });
 
         const conversation = new Conversation();
 
         while (true) {
 
-            const input = await rl.question("You > ");
+            // const input = await rl.question("You > ");
+            const input = await text(
+                {message: 'You'}    
+            ) as string
 
             if (input.toLowerCase() === "exit") {
                 break;
@@ -76,7 +79,7 @@ export class ChatCommand {
                                 break;
 
                             case "done":
-                                console.log();
+                                // console.log();
                                 break;
                         
                             case "error":
@@ -85,7 +88,8 @@ export class ChatCommand {
                                 break;
                             }
                     }
-                    console.log("\n");
+                    process.stdout.write("\n")
+                    // console.log("\n");
                     if (hadError){
                         conversation.removeLastMessage();
                     }else{
@@ -98,7 +102,7 @@ export class ChatCommand {
                     const response = await agent.execute({
                         messages,                                   
                     });
-                    console.log(`AI  > ${response.text}\n`);
+                    console.log(`AI  > ${response.text}`);
                     conversation.addAssistantMessage(response.text);
                 }
 
@@ -121,7 +125,7 @@ export class ChatCommand {
 
         }
 
-        rl.close();
+        // rl.close();
 
     }
 

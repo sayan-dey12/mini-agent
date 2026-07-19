@@ -1,5 +1,6 @@
 import { CONFIG_CATALOG, FileConfigService } from "@mini-agent/core";
-import { isCancel, select } from "@clack/prompts";
+import { isCancel, select , text } from "@clack/prompts";
+import { mind } from "gradient-string";
 
 export class ConfigCommand{
     async execute(): Promise<void>{
@@ -34,7 +35,7 @@ export class ConfigCommand{
                     await this.changeMode(configServices);
                     break;                    
                 case "temperature":
-                    console.log("Temperature...");
+                    await this.changeTemperature(configServices);
                     break;
                     
             }
@@ -121,6 +122,43 @@ export class ConfigCommand{
     }
 
     private async changeTemperature(configServices: FileConfigService){
-        
+
+        const limit = CONFIG_CATALOG.temperature;
+
+        while(true){
+            const value = await text({
+                message: `Temperature (${limit.min} - ${limit.max})`,
+                placeholder: `${limit.default}`,
+            });
+
+            if (isCancel(value)) {
+                return;
+            }
+
+            const temperature = Number(value);
+
+            if (Number.isNaN(temperature)) {
+                console.log("Please enter a valid number.");
+                continue;
+            }
+
+            if (temperature>limit.max || temperature<limit.min){
+                console.log(`Temperature must be between ${limit.min} and ${limit.max}.`);
+                continue;
+            }
+
+            const remainder = (temperature - limit.min) % limit.step;
+            if(Math.abs(remainder) > Number.EPSILON){
+                console.log(`Temperature must be in steps of ${limit.step}.`);
+            continue;
+            }
+
+            await configServices.update({
+                temperature: temperature,
+            });
+               
+            return;
+        }
     }
+       
 }

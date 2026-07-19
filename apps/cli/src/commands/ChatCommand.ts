@@ -4,6 +4,8 @@ import { stdin, stdout } from "node:process";
 import { ApplicationContainer } from "@mini-agent/core";
 import type { ChatMessage } from "@mini-agent/shared";
 import {Conversation} from "@mini-agent/agents";
+
+import {confirm,cancel,isCancel, select} from "@clack/prompts"
 export class ChatCommand {
 
     async execute(): Promise<void> {
@@ -17,7 +19,35 @@ export class ChatCommand {
 
         console.log("Mini Agent Chat");
         console.log("Type 'exit' to quit.\n");
+        
+        //testing
+        // const shouldContinue = await confirm({
+        //     message: 'Do you want to continue?'
+        // })
 
+        // if (shouldContinue){
+        //     console.log("hello");
+        // }else{
+        //     process.exit(0)
+        // }
+        //
+        const chooseMode = await select({
+            message : "Choose chat mode...",
+            options: [
+                {value: 'stream' , label: 'Stream'},
+                {value: 'full' , label: 'Full Response'},
+                {value: 'exit', label: 'Exit'}
+            ]
+        })
+
+        if (isCancel(chooseMode)){
+            process.exit(0);
+        }
+
+        if (chooseMode == 'exit'){
+            process.exit(0);
+        }
+        
         const conversation = new Conversation();
 
         while (true) {
@@ -34,58 +64,57 @@ export class ChatCommand {
             
             try {
 
-                 // for streaming response // 
-                //-----------------------------------------------------------//
-                process.stdout.write("AI  > ");
+                if (chooseMode == 'stream'){
+                    // for streaming response //
+                    process.stdout.write("AI  > ");
 
-                let hadError = false
-                let assistantResponse = "";
-                for await (const event of agent.stream({messages})){
-                    switch(event.type){
-                        case "text":
-                            process.stdout.write(event.data as string);
-                            assistantResponse += event.data as string;
-                            break;
+                    let hadError = false
+                    let assistantResponse = "";
+                    for await (const event of agent.stream({messages})){
+                        switch(event.type){
+                            case "text":
+                                process.stdout.write(event.data as string);
+                                assistantResponse += event.data as string;
+                                break;
 
-                        case "tool_start":
-                            console.log(
-                                `\n⚙ ${event.data as string}`
-                            );
-                            break;
+                            case "tool_start":
+                                console.log(
+                                    `\n⚙ ${event.data as string}`
+                                );
+                                break;
 
-                        case "tool_end":
-                            console.log(
-                                `\n✓ ${(event.data as {tool: string}).tool}`
-                            );
-                            break;
+                            case "tool_end":
+                                console.log(
+                                    `\n✓ ${(event.data as {tool: string}).tool}`
+                                );
+                                break;
 
-                        case "done":
-                            console.log();
-                            break;
-                    
-                        case "error":
-                            hadError = true;
-                            console.log(`\n⚠ ${event.data as string}`);
-                            break;
-                        }
-                }
-                console.log("\n");
-                if (hadError){
-                    conversation.removeLastMessage();
-                }else{
-                    conversation.addAssistantMessage(assistantResponse);
-                }
+                            case "done":
+                                console.log();
+                                break;
+                        
+                            case "error":
+                                hadError = true;
+                                console.log(`\n⚠ ${event.data as string}`);
+                                break;
+                            }
+                    }
+                    console.log("\n");
+                    if (hadError){
+                        conversation.removeLastMessage();
+                    }else{
+                        conversation.addAssistantMessage(assistantResponse);
+                    }
                 
-                //-------------------------------------------------------//
+                }else if(chooseMode == 'full'){
+                     //for execute function -> all response together//
 
-
-                //for execute function -> all response together//
-
-                // const response = await agent.execute({
-                //     messages,                                   
-                // });
-                // console.log(`AI  > ${response.text}\n`);
-                // conversation.addAssistantMessage(response.text);
+                    const response = await agent.execute({
+                        messages,                                   
+                    });
+                    console.log(`AI  > ${response.text}\n`);
+                    conversation.addAssistantMessage(response.text);
+                }
 
                     
             } catch (error) {

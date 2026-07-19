@@ -1,4 +1,4 @@
-import { FileConfigService } from "@mini-agent/core";
+import { CONFIG_CATALOG, FileConfigService } from "@mini-agent/core";
 import { isCancel, select } from "@clack/prompts";
 
 export class ConfigCommand{
@@ -42,13 +42,20 @@ export class ConfigCommand{
     }
 
     private async changeMode(configServices: FileConfigService){
+        // const choice = await select({
+        //     message: "Choose chat mode..",
+        //     options: [
+        //         {value: "stream", label: "Stream"},
+        //         {value: "full", label: "Full Response"},
+        //         {value: "exit", label: "Exit"},
+        //     ]
+        // })
+
         const choice = await select({
-            message: "Choose chat mode..",
-            options: [
-                {value: "stream", label: "Stream"},
-                {value: "full", label: "Full Response"},
-                {value: "exit", label: "Exit"},
-            ]
+            message: "Choose chat mode...",
+            options: CONFIG_CATALOG.modes.map(mode => ({
+                value: mode.id, label: mode.label
+            }))
         })
 
         if(isCancel(choice) || choice == "exit"){

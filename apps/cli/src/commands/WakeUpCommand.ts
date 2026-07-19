@@ -1,12 +1,11 @@
 import { select , isCancel } from "@clack/prompts";
-import chalk from "chalk";
-import boxen from "boxen";
 import figlet from "figlet";
 import gradient from "gradient-string";
-import logSymbols from "log-symbols";
+import { ConfigCommand } from "./ConfigCommand.js";
+import { ChatCommand } from "./ChatCommand.js";
 
 export class WakeUpCommand{
-    
+
     async execute(): Promise<void>{
 
         console.clear();
@@ -21,5 +20,27 @@ export class WakeUpCommand{
         );
 
         console.log();
+
+        const choice = await select({
+            message: "Select your option...",
+            options: [
+                {value: 'chat' , label: 'Chat'},
+                {value: 'config' , label: 'Configuration'},
+                {value: 'exit' , label: 'Exit'},
+            ]
+        })
+
+        if (isCancel(choice) || choice === "exit") {
+                return;
+        }
+
+        switch(choice){
+            case "config":
+                await new ConfigCommand().execute();
+                break;
+            case "chat":
+                await new ChatCommand().execute();
+                break;
+        }
     }
 }

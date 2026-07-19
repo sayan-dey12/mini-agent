@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { HelloCommand } from "./commands/HelloCommand.js";
 import { TestCommand } from "./commands/TestCommand.js";
 import { ChatCommand } from "./commands/ChatCommand.js";
+import { ConfigCommand } from "./commands/ConfigCommand.js";
 
 const program = new Command();
 
@@ -31,6 +32,15 @@ program
   .action(async()=>{
     await new ChatCommand().execute();
   })
+
+  program
+  .command("config")
+  .description("Configuration of the AI agent (provider , model , mode , temperature)")
+  .action(
+    async()=>{
+      await new ConfigCommand().execute();
+    }
+  )
 
   
 export default program;

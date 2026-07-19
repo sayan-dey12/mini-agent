@@ -4,26 +4,29 @@ import { stdin, stdout } from "node:process";
 import { ApplicationContainer } from "@mini-agent/core";
 import type { ChatMessage } from "@mini-agent/shared";
 import {Conversation} from "@mini-agent/agents";
-
+import { FileConfigService } from "@mini-agent/core";
 import {isCancel, select , text} from "@clack/prompts"
 export class ChatCommand {
 
     async execute(): Promise<void> {
 
         const agent = ApplicationContainer.agent();
-
+        const configService = new FileConfigService();
+        const config = await configService.load()
 
         console.log("Mini Agent Chat");
         console.log("Type 'exit' to quit.\n");
     
-        const chooseMode = await select({
-            message : "Choose chat mode...",
-            options: [
-                {value: 'stream' , label: 'Stream'},
-                {value: 'full' , label: 'Full Response'},
-                {value: 'exit', label: 'Exit'}
-            ]
-        })
+        // const chooseMode = await select({
+        //     message : "Choose chat mode...",
+        //     options: [
+        //         {value: 'stream' , label: 'Stream'},
+        //         {value: 'full' , label: 'Full Response'},
+        //         {value: 'exit', label: 'Exit'}
+        //     ]
+        // })
+
+        const chooseMode = config.mode
 
         if (isCancel(chooseMode) || chooseMode == 'exit'){
             process.exit(0);

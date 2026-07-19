@@ -42,7 +42,7 @@ export class ConfigCommand{
         }
     }
 
-    private async changeMode(configServices: FileConfigService){
+    private async changeMode(configServices: FileConfigService): Promise<void>{
         // const choice = await select({
         //     message: "Choose chat mode..",
         //     options: [
@@ -74,7 +74,7 @@ export class ConfigCommand{
 
     }
 
-    private async changeModel(configServices: FileConfigService){
+    private async changeModel(configServices: FileConfigService): Promise<void>{
         const config = await configServices.load();
         const provider = CONFIG_CATALOG.providers.find(
             p => p.id === config.provider
@@ -103,7 +103,7 @@ export class ConfigCommand{
 
     }
 
-    private async changeProvider(configServices: FileConfigService){
+    private async changeProvider(configServices: FileConfigService): Promise<void>{
         const choice = await select({
             message: "Choose provider...",
             options: [
@@ -130,7 +130,7 @@ export class ConfigCommand{
         )
     }
 
-    private async changeTemperature(configServices: FileConfigService){
+    private async changeTemperature(configServices: FileConfigService): Promise<void>{
 
         const limit = CONFIG_CATALOG.temperature;
         const factor = 10;

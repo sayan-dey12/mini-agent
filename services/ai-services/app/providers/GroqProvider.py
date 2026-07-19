@@ -23,40 +23,51 @@ class GroqProvider(ILLMProvider):
         )
 
     def chat(self, request: ProviderRequest) -> ProviderResponse:
-        response = self.client.chat.completions.create(
-            model=request.model or "llama-3.3-70b-versatile" , 
-            messages=request.messages,
-            tools=request.tools
-        )
         
-        # message = response.choices[0].message
-        # if message.tool_calls:
-        #     print("Tool call detected: ", message.tool_calls)
-        # else:
-        #     return message.content
-        
-        message = response.choices[0].message
-        tool_calls = []
-        if message.tool_calls:
-            for call in message.tool_calls:
-                tool_calls.append(
-                    ToolCall(
-                        id=call.id,
-                        type=call.type,
-                        function=ToolFunction(
-                            name=call.function.name,
-                            arguments=call.function.arguments,
-                        ),
-                    )
-                )
-                
-        return ProviderResponse(
-            message = ProviderMessage(
-                role = message.role,
-                content = message.content,
-                tool_calls = tool_calls
+        try:
+            
+            response = self.client.chat.completions.create(
+                model=request.model or "llama-3.3-70b-versatile" , 
+                messages=request.messages,
+                tools=request.tools
             )
-        )
+            
+            # message = response.choices[0].message
+            # if message.tool_calls:
+            #     print("Tool call detected: ", message.tool_calls)
+            # else:
+            #     return message.content
+            
+            message = response.choices[0].message
+            tool_calls = []
+            if message.tool_calls:
+                for call in message.tool_calls:
+                    tool_calls.append(
+                        ToolCall(
+                            id=call.id,
+                            type=call.type,
+                            function=ToolFunction(
+                                name=call.function.name,
+                                arguments=call.function.arguments,
+                            ),
+                        )
+                    )
+                    
+            return ProviderResponse(
+                message = ProviderMessage(
+                    role = message.role,
+                    content = message.content,
+                    tool_calls = tool_calls
+                )
+            )
+            
+        except APIError as e:
+            return ProviderResponse(
+                message = ProviderMessage(
+                    content=f"__PROVIDER_ERROR__:{e}"
+                )
+            )
+        
             
     def stream(self , request: ProviderRequest):
         try:

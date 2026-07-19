@@ -189,6 +189,12 @@ class ReasoningEngine:
             tool_calls: list[ToolCall] = []
 
             for chunk in self.provider.stream(request):
+                
+                if chunk.finish_reason == "error":
+                    self.logger.error(f"Provider error: {chunk.content}")
+                    yield StreamEvent(type=StreamEventType.ERROR, data="The model had trouble with that request. Try rephrasing or simplifying it.")
+                    yield StreamEvent(type=StreamEventType.DONE, data=None)
+                    return
 
                 if chunk.content:
 
@@ -200,11 +206,6 @@ class ReasoningEngine:
                         type=StreamEventType.TEXT,
                         data=chunk.content,
                     )
-                if chunk.finish_reason == "error":
-                    self.logger.error(f"Provider error: {chunk.content}")
-                    yield StreamEvent(type=StreamEventType.ERROR, data="The model had trouble with that request. Try rephrasing or simplifying it.")
-                    yield StreamEvent(type=StreamEventType.DONE, data=None)
-                    return
 
                 if chunk.tool_calls:
 

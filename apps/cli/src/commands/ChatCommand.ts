@@ -4,8 +4,6 @@ import { stdin, stdout } from "node:process";
 import { ApplicationContainer } from "@mini-agent/core";
 import type { ChatMessage } from "@mini-agent/shared";
 import {Conversation} from "@mini-agent/agents";
-import { log } from "node:console";
-
 export class ChatCommand {
 
     async execute(): Promise<void> {
@@ -40,6 +38,7 @@ export class ChatCommand {
                 //-----------------------------------------------------------//
                 process.stdout.write("AI  > ");
 
+                let hadError = false
                 let assistantResponse = "";
                 for await (const event of agent.stream({messages})){
                     switch(event.type){
@@ -65,12 +64,17 @@ export class ChatCommand {
                             break;
                     
                         case "error":
+                            hadError = true;
                             console.log(`\n⚠ ${event.data as string}`);
                             break;
                         }
                 }
                 console.log("\n");
-                conversation.addAssistantMessage(assistantResponse);
+                if (hadError){
+                    conversation.removeLastMessage();
+                }else{
+                    conversation.addAssistantMessage(assistantResponse);
+                }
                 
                 //-------------------------------------------------------//
 

@@ -1,6 +1,6 @@
 export interface AgentConfig{
     provider: string;
     model: string;
-    mode: 'stream' | 'full' | 'exit';
+    mode: 'stream' | 'full';
     temperature: number;
 }

@@ -54,12 +54,15 @@ export class ConfigCommand{
 
         const choice = await select({
             message: "Choose chat mode...",
-            options: CONFIG_CATALOG.modes.map(mode => ({
+            options: [
+                ...CONFIG_CATALOG.modes.map(mode => ({
                 value: mode.id, label: mode.label
-            }))
+            })),
+            {value: "back" , label: "Back"}
+        ]
         })
 
-        if(isCancel(choice) || choice == "exit"){
+        if(isCancel(choice) || choice == "back"){
                 return;
         }
         if(choice == "full"){
@@ -82,14 +85,17 @@ export class ConfigCommand{
         const choice = await select(
             {
                 message: "Choose model...",
-                options: provider.models.map(
-                    model => (
-                        {value: model.id , label: model.label}
-                    )
-                )
+                options: [
+                    ...provider.models.map(
+                        model => (
+                            {value: model.id , label: model.label}
+                        )
+                ),
+                {value: "back" , label: "Back"}
+                ]
             }
         )
-        if (isCancel(choice)) return;
+        if (isCancel(choice) || choice == "back") return;
 
         await configServices.update({
             model: choice
@@ -100,14 +106,17 @@ export class ConfigCommand{
     private async changeProvider(configServices: FileConfigService){
         const choice = await select({
             message: "Choose provider...",
-            options: CONFIG_CATALOG.providers.map(
-                provider => (
-                    {value: provider.id , label: provider.label}
-                )
-            )
+            options: [
+                ...CONFIG_CATALOG.providers.map(
+                    provider => (
+                        {value: provider.id , label: provider.label}
+                    )   
+            ),
+            {value: "back" , label: "Back"}
+            ]
         })
 
-        if(isCancel(choice)){
+        if(isCancel(choice) || choice == "back" ){
             return;
         }
 
@@ -127,11 +136,15 @@ export class ConfigCommand{
         const factor = 10;
         while(true){
             const value = await text({
-                message: `Temperature (${limit.min} - ${limit.max})`,
+                message: `Temperature (${limit.min} - ${limit.max}) or write 'back' to exit...`,
                 placeholder: `${limit.default}`,
             });
 
             if (isCancel(value)) {
+                return;
+            }
+
+            if (value.toLowerCase() === "back"){
                 return;
             }
 

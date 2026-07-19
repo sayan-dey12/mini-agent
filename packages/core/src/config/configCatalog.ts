@@ -8,10 +8,6 @@ export const CONFIG_CATALOG = {
             id: "full",
             label: "Full Response",
         },
-        {
-            id: "exit",
-            label: "Exit"
-        }
     ],
 
     providers: [

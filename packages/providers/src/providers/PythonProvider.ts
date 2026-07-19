@@ -26,6 +26,8 @@ export class PythonProvider implements IProvider {
                     },
                     body: JSON.stringify({
                         messages: request.messages,
+                        model: request.model,
+                        temperature: request.temperature,
                     }),
                     signal: controller.signal,
                 }

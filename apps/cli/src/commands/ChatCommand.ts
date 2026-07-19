@@ -106,7 +106,11 @@ export class ChatCommand {
                     spin.start("Thinking...")
                     try {
                         const response = await agent.execute({
-                            messages,                                   
+                            messages,
+                            config:{
+                                model: config.model,
+                                temperature: config.temperature,
+                            }                                   
                         });
                         spin.stop("Response ready")
                         console.log("\n🤖 AI >", response.text);

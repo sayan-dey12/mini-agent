@@ -124,7 +124,7 @@ export class ConfigCommand{
     private async changeTemperature(configServices: FileConfigService){
 
         const limit = CONFIG_CATALOG.temperature;
-
+        const factor = 10;
         while(true){
             const value = await text({
                 message: `Temperature (${limit.min} - ${limit.max})`,
@@ -147,10 +147,13 @@ export class ConfigCommand{
                 continue;
             }
 
-            const remainder = (temperature - limit.min) % limit.step;
-            if(Math.abs(remainder) > Number.EPSILON){
+            const temp10 = Math.round(temperature * factor);
+            const min10 = Math.round(limit.min * factor);
+            const step10 = Math.round(limit.step * factor);
+
+            if((temp10 - min10) % step10 !== 0 ){
                 console.log(`Temperature must be in steps of ${limit.step}.`);
-            continue;
+                continue;
             }
 
             await configServices.update({

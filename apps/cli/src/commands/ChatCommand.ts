@@ -4,8 +4,6 @@ import { stdin, stdout } from "node:process";
 import { ApplicationContainer } from "@mini-agent/core";
 import type { ChatMessage } from "@mini-agent/shared";
 import {Conversation} from "@mini-agent/agents";
-import { log } from "node:console";
-
 export class ChatCommand {
 
     async execute(): Promise<void> {
@@ -38,46 +36,56 @@ export class ChatCommand {
 
                  // for streaming response // 
                 //-----------------------------------------------------------//
-                // process.stdout.write("AI  > ");
+                process.stdout.write("AI  > ");
 
-                // let assistantResponse = "";
-                // for await (const event of agent.stream({messages})){
-                //     switch(event.type){
-                //         case "text":
-                //             process.stdout.write(event.data as string);
-                //             assistantResponse += event.data as string;
-                //             break;
+                let hadError = false
+                let assistantResponse = "";
+                for await (const event of agent.stream({messages})){
+                    switch(event.type){
+                        case "text":
+                            process.stdout.write(event.data as string);
+                            assistantResponse += event.data as string;
+                            break;
 
-                //         case "tool_start":
-                //             console.log(
-                //                 `\n⚙ ${event.data as string}`
-                //             );
-                //             break;
+                        case "tool_start":
+                            console.log(
+                                `\n⚙ ${event.data as string}`
+                            );
+                            break;
 
-                //         case "tool_end":
-                //             console.log(
-                //                 `\n✓ ${(event.data as {tool: string}).tool}`
-                //             );
-                //             break;
+                        case "tool_end":
+                            console.log(
+                                `\n✓ ${(event.data as {tool: string}).tool}`
+                            );
+                            break;
 
-                //         case "done":
-                //             console.log();
-                //             break;
-                //         }
-                // }
-                // console.log("\n");
-                // conversation.addAssistantMessage(assistantResponse);
+                        case "done":
+                            console.log();
+                            break;
+                    
+                        case "error":
+                            hadError = true;
+                            console.log(`\n⚠ ${event.data as string}`);
+                            break;
+                        }
+                }
+                console.log("\n");
+                if (hadError){
+                    conversation.removeLastMessage();
+                }else{
+                    conversation.addAssistantMessage(assistantResponse);
+                }
                 
                 //-------------------------------------------------------//
 
 
                 //for execute function -> all response together//
 
-                const response = await agent.execute({
-                    messages,                                   
-                });
-                console.log(`AI  > ${response.text}\n`);
-                conversation.addAssistantMessage(response.text);
+                // const response = await agent.execute({
+                //     messages,                                   
+                // });
+                // console.log(`AI  > ${response.text}\n`);
+                // conversation.addAssistantMessage(response.text);
 
                     
             } catch (error) {

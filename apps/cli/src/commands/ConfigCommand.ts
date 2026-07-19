@@ -28,7 +28,7 @@ export class ConfigCommand{
                     await this.changeProvider(configServices);
                     break;
                 case "model":
-                    console.log("Model...");
+                    await this.changeModel(configServices);
                     break;
                 case "mode":
                     await this.changeMode(configServices);
@@ -71,6 +71,28 @@ export class ConfigCommand{
     }
 
     private async changeModel(configServices: FileConfigService){
+        const config = await configServices.load();
+        const provider = CONFIG_CATALOG.providers.find(
+            p => p.id === config.provider
+        )
+
+        if(!provider) return;
+
+        const choice = await select(
+            {
+                message: "Choose model...",
+                options: provider.models.map(
+                    model => (
+                        {value: model.id , label: model.label}
+                    )
+                )
+            }
+        )
+        if (isCancel(choice)) return;
+
+        await configServices.update({
+            model: choice
+        })
 
     }
 

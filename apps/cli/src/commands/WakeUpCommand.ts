@@ -19,28 +19,29 @@ export class WakeUpCommand{
         )
         );
 
-        console.log();
 
-        const choice = await select({
-            message: "Select your option...",
-            options: [
-                {value: 'chat' , label: 'Chat'},
-                {value: 'config' , label: 'Configuration'},
-                {value: 'exit' , label: 'Exit'},
-            ]
-        })
+        while(true){
+            const choice = await select({
+                message: "Select your option...",
+                options: [
+                    {value: 'chat' , label: 'Chat'},
+                    {value: 'config' , label: 'Configuration'},
+                    {value: 'exit' , label: 'Exit'},
+                ]
+            })
 
-        if (isCancel(choice) || choice === "exit") {
-                return;
-        }
+            if (isCancel(choice) || choice === "exit") {
+                 return;
+            }
 
-        switch(choice){
-            case "config":
-                await new ConfigCommand().execute();
-                break;
-            case "chat":
-                await new ChatCommand().execute();
-                break;
+            switch(choice){
+                case "config":
+                    await new ConfigCommand().execute();
+                    break;
+                case "chat":
+                    await new ChatCommand().execute();
+                    break;
+            }
         }
     }
 }

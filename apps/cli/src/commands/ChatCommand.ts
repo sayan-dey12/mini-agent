@@ -63,6 +63,10 @@ export class ChatCommand {
                         case "done":
                             console.log();
                             break;
+                    
+                        case "error":
+                            console.log(`\n⚠ ${event.data as string}`);
+                            break;
                         }
                 }
                 console.log("\n");

@@ -41,8 +41,11 @@ export class ChatCommand {
             // const input = await rl.question("You > ");
             const input = await text(
                 {message: 'You'}    
-            ) as string
+            )
 
+            if (isCancel(input)){
+                break;
+            }
             if (input.toLowerCase() === "exit") {
                 break;
             }

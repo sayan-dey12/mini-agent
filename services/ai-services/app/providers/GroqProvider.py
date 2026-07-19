@@ -1,7 +1,7 @@
 from email.mime import message
 import os
 
-from groq import Groq
+from groq import Groq , APIError
 from dotenv import load_dotenv
 from app.providers.base import ILLMProvider
 from app.runtime.ToolCall import ToolCall
@@ -65,7 +65,9 @@ class GroqProvider(ILLMProvider):
         except APIError as e:
             return ProviderResponse(
                 message = ProviderMessage(
-                    content=f"__PROVIDER_ERROR__:{e}"
+                    role="assistant",
+                    content=f"__PROVIDER_ERROR__:{e}",
+                    tool_calls=[],
                 )
             )
         

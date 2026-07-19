@@ -113,6 +113,13 @@ class ReasoningEngine:
             )
 
             message = response.message
+            
+            if message.content and message.content.startswith("__PROVIDER_ERROR__"):
+                self.logger.error(message.content)
+                error_text = "Sorry, I had trouble processing that. Try rephrasing or simplifying your request."
+                messages.append({"role": "assistant", "content": error_text})
+                self.logger.reasoning("Reasoning finished with provider error.")
+                return error_text
 
             if not message.tool_calls:
                 messages.append({
@@ -193,6 +200,11 @@ class ReasoningEngine:
                         type=StreamEventType.TEXT,
                         data=chunk.content,
                     )
+                if chunk.finish_reason == "error":
+                    self.logger.error(f"Provider error: {chunk.content}")
+                    yield StreamEvent(type=StreamEventType.ERROR, data="The model had trouble with that request. Try rephrasing or simplifying it.")
+                    yield StreamEvent(type=StreamEventType.DONE, data=None)
+                    return
 
                 if chunk.tool_calls:
 

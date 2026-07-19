@@ -5,7 +5,7 @@ import { ApplicationContainer } from "@mini-agent/core";
 import type { ChatMessage } from "@mini-agent/shared";
 import {Conversation} from "@mini-agent/agents";
 import { FileConfigService } from "@mini-agent/core";
-import {isCancel, select , text} from "@clack/prompts"
+import {isCancel, select , text , spinner} from "@clack/prompts"
 export class ChatCommand {
 
     async execute(): Promise<void> {
@@ -14,7 +14,7 @@ export class ChatCommand {
         const configService = new FileConfigService();
         const config = await configService.load()
 
-        console.log("Mini Agent Chat");
+        console.log("🤖 Mini Agent Chat");
         console.log("Type 'exit' to quit.\n");
     
         // const chooseMode = await select({
@@ -28,7 +28,7 @@ export class ChatCommand {
 
         const chooseMode = config.mode
 
-        if (isCancel(chooseMode) || chooseMode == 'exit'){
+        if (isCancel(chooseMode)){
             process.exit(0);
         }
         
@@ -46,10 +46,7 @@ export class ChatCommand {
                 {message: 'You'}    
             )
 
-            if (isCancel(input)){
-                break;
-            }
-            if (input.toLowerCase() === "exit") {
+            if (isCancel(input) || input.toLowerCase() === "exit"){
                 break;
             }
 
@@ -61,7 +58,7 @@ export class ChatCommand {
 
                 if (chooseMode == 'stream'){
                     // for streaming response //
-                    process.stdout.write("AI  > ");
+                    process.stdout.write("🤖 AI  > ");
 
                     let hadError = false
                     let assistantResponse = "";
@@ -74,13 +71,13 @@ export class ChatCommand {
 
                             case "tool_start":
                                 console.log(
-                                    `\n⚙ ${event.data as string}`
+                                    `\n⚙ Runnign ${event.data as string}...`
                                 );
                                 break;
 
                             case "tool_end":
                                 console.log(
-                                    `\n✓ ${(event.data as {tool: string}).tool}`
+                                    `\n✓ ${(event.data as {tool: string}).tool} completed`
                                 );
                                 break;
 
@@ -105,11 +102,20 @@ export class ChatCommand {
                 }else if(chooseMode == 'full'){
                      //for execute function -> all response together//
 
-                    const response = await agent.execute({
-                        messages,                                   
-                    });
-                    console.log(`AI  > ${response.text}`);
-                    conversation.addAssistantMessage(response.text);
+                    const spin = spinner();
+                    spin.start("Thinking...")
+                    try {
+                        const response = await agent.execute({
+                            messages,                                   
+                        });
+                        spin.stop("Response ready")
+                        console.log("\n🤖 AI >", response.text);
+                        conversation.addAssistantMessage(response.text);
+                    } catch (error) {
+                        spin.stop("Failed");
+                        throw error;
+                    }
+                    
                 }
 
                     

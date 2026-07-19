@@ -13,6 +13,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@clack/prompts": "^1.7.0",
     "@mini-agent/agents": "workspace:*",
     "@mini-agent/core": "workspace:*",
     "@mini-agent/providers": "workspace:*",

@@ -59,51 +59,57 @@ class GroqProvider(ILLMProvider):
         )
             
     def stream(self , request: ProviderRequest):
-        response = self.client.chat.completions.create(
-            model=request.model or "llama-3.3-70b-versatile",
-            messages=request.messages,
-            stream=True,
-            tools=request.tools
-            
-        )
-        for chunk in response:
-
-            choice = chunk.choices[0]
-            # print("finish_reason:", choice.finish_reason)
-            # print("delta:", choice.delta)
-            delta = choice.delta
-
-            # Stream normal text
-            if delta.content:
-                yield ProviderChunk(
-                    content=delta.content,
-                )
+        try:
+            response = self.client.chat.completions.create(
+                model=request.model or "llama-3.3-70b-versatile",
+                messages=request.messages,
+                stream=True,
+                tools=request.tools
                 
-            # for tool call
-            if delta.tool_calls:
+            )
+            for chunk in response:
 
-                tool_calls = []
+                choice = chunk.choices[0]
+                # print("finish_reason:", choice.finish_reason)
+                # print("delta:", choice.delta)
+                delta = choice.delta
 
-                for call in delta.tool_calls:
+                # Stream normal text
+                if delta.content:
+                    yield ProviderChunk(
+                        content=delta.content,
+                    )
+                    
+                # for tool call
+                if delta.tool_calls:
 
-                    tool_calls.append(
-                        ToolCall(
-                            id=call.id,
-                            type=call.type,
-                            function=ToolFunction(
-                                name=call.function.name,
-                                arguments=call.function.arguments,
-                            ),
+                    tool_calls = []
+
+                    for call in delta.tool_calls:
+
+                        tool_calls.append(
+                            ToolCall(
+                                id=call.id,
+                                type=call.type,
+                                function=ToolFunction(
+                                    name=call.function.name,
+                                    arguments=call.function.arguments,
+                                ),
+                            )
                         )
+
+                    yield ProviderChunk(
+                        tool_calls=tool_calls,
                     )
 
-                yield ProviderChunk(
-                    tool_calls=tool_calls,
-                )
 
+                # End of generation
+                if choice.finish_reason:
+                    yield ProviderChunk(
+                        finish_reason=choice.finish_reason,
+                    )
 
-            # End of generation
-            if choice.finish_reason:
-                yield ProviderChunk(
-                    finish_reason=choice.finish_reason,
-                )
+                
+        except APIError as e:
+            yield ProviderChunk(finish_reason="error", content=f"__PROVIDER_ERROR__:{e}")
+        

@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 
 import { DEFAULT_CONFIG } from "../config.js";
-import type { AgentConfig } from "../types/AgentConfig.js";
+import type { AgentConfig } from "@mini-agent/shared";
 import type { IConfigService } from "../interfaces/IConfigService.js";
 
 export class FileConfigService implements IConfigService {

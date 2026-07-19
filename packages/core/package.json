@@ -10,6 +10,7 @@
     "dependencies": {
         "@mini-agent/agents": "workspace:*",
         "@mini-agent/providers": "workspace:*",
+        "@mini-agent/shared": "workspace:*",
         "@mini-agent/tools": "workspace:*"
     }
 }

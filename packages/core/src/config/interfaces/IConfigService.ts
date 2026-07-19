@@ -1,4 +1,4 @@
-import { AgentConfig } from "../types/AgentConfig.js";
+import { AgentConfig } from "@mini-agent/shared";
 
 export interface IConfigService{
     load() : Promise<AgentConfig>;

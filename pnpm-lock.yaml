@@ -273,6 +273,9 @@ importers:
       '@mini-agent/providers':
         specifier: workspace:*
         version: link:../providers
+      '@mini-agent/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@mini-agent/tools':
         specifier: workspace:*
         version: link:../tools

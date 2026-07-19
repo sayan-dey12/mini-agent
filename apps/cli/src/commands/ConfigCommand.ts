@@ -25,7 +25,7 @@ export class ConfigCommand{
             
             switch(choice){
                 case "provider":
-                    console.log("Provider.....");
+                    await this.changeProvider(configServices);
                     break;
                 case "model":
                     console.log("Model...");
@@ -68,5 +68,37 @@ export class ConfigCommand{
             await configServices.update({mode: "stream"});
         }
 
+    }
+
+    private async changeModel(configServices: FileConfigService){
+
+    }
+
+    private async changeProvider(configServices: FileConfigService){
+        const choice = await select({
+            message: "Choose provider...",
+            options: CONFIG_CATALOG.providers.map(
+                provider => (
+                    {value: provider.id , label: provider.label}
+                )
+            )
+        })
+
+        if(isCancel(choice)){
+            return;
+        }
+
+        const provider = CONFIG_CATALOG.providers.find( p => p.id == choice);
+
+        await configServices.update(
+            {
+                provider: provider?.id,
+                model: provider?.models[0].id
+            }
+        )
+    }
+
+    private async changeTemperature(configServices: FileConfigService){
+        
     }
 }

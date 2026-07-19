@@ -72,7 +72,7 @@ class GroqProvider(ILLMProvider):
             )
         
             
-    def stream(self , request: ProviderRequest):
+    def stream(self, request: ProviderRequest):
         try:
             response = self.client.chat.completions.create(
                 model=request.model or "llama-3.3-70b-versatile",
@@ -80,51 +80,44 @@ class GroqProvider(ILLMProvider):
                 stream=True,
                 tools=request.tools,
                 temperature=request.temperature if request.temperature is not None else 0.2,
-                
             )
-            for chunk in response:
 
+            pending: dict[int, dict] = {}
+
+            for chunk in response:
                 choice = chunk.choices[0]
-                # print("finish_reason:", choice.finish_reason)
-                # print("delta:", choice.delta)
                 delta = choice.delta
 
-                # Stream normal text
                 if delta.content:
-                    yield ProviderChunk(
-                        content=delta.content,
-                    )
-                    
-                # for tool call
+                    yield ProviderChunk(content=delta.content)
+
                 if delta.tool_calls:
-
-                    tool_calls = []
-
                     for call in delta.tool_calls:
-
-                        tool_calls.append(
-                            ToolCall(
-                                id=call.id,
-                                type=call.type,
-                                function=ToolFunction(
-                                    name=call.function.name,
-                                    arguments=call.function.arguments,
-                                ),
-                            )
+                        slot = pending.setdefault(
+                            call.index,
+                            {"id": None, "type": "function", "name": "", "arguments": ""},
                         )
+                        if call.id:
+                            slot["id"] = call.id
+                        if call.type:
+                            slot["type"] = call.type
+                        if call.function and call.function.name:
+                            slot["name"] += call.function.name
+                        if call.function and call.function.arguments:
+                            slot["arguments"] += call.function.arguments
 
-                    yield ProviderChunk(
-                        tool_calls=tool_calls,
-                    )
-
-
-                # End of generation
                 if choice.finish_reason:
-                    yield ProviderChunk(
-                        finish_reason=choice.finish_reason,
-                    )
+                    if choice.finish_reason == "tool_calls" and pending:
+                        finished = [
+                            ToolCall(
+                                id=slot["id"],
+                                type=slot["type"],
+                                function=ToolFunction(name=slot["name"], arguments=slot["arguments"]),
+                            )
+                            for slot in pending.values()
+                        ]
+                        yield ProviderChunk(tool_calls=finished)
+                    yield ProviderChunk(finish_reason=choice.finish_reason)
 
-                
         except APIError as e:
             yield ProviderChunk(finish_reason="error", content=f"__PROVIDER_ERROR__:{e}")
-        

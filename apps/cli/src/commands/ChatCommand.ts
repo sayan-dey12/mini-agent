@@ -58,7 +58,7 @@ export class ChatCommand {
 
                 if (chooseMode == 'stream'){
                     // for streaming response //
-                    process.stdout.write("AI  > ");
+                    process.stdout.write("🤖 AI  > ");
 
                     let hadError = false
                     let assistantResponse = "";
@@ -102,11 +102,20 @@ export class ChatCommand {
                 }else if(chooseMode == 'full'){
                      //for execute function -> all response together//
 
-                    const response = await agent.execute({
-                        messages,                                   
-                    });
-                    console.log(`AI  > ${response.text}`);
-                    conversation.addAssistantMessage(response.text);
+                    const spin = spinner();
+                    spin.start("Thinking...")
+                    try {
+                        const response = await agent.execute({
+                            messages,                                   
+                        });
+                        spin.stop("Response ready")
+                        console.log("\n🤖 AI >", response.text);
+                        conversation.addAssistantMessage(response.text);
+                    } catch (error) {
+                        spin.stop("Failed");
+                        throw error;
+                    }
+                    
                 }
 
                     

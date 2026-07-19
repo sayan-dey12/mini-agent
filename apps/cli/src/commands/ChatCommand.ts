@@ -12,25 +12,10 @@ export class ChatCommand {
 
         const agent = ApplicationContainer.agent();
 
-        const rl = readline.createInterface({
-            input: stdin,
-            output: stdout,
-        });
 
         console.log("Mini Agent Chat");
         console.log("Type 'exit' to quit.\n");
-        
-        //testing
-        // const shouldContinue = await confirm({
-        //     message: 'Do you want to continue?'
-        // })
-
-        // if (shouldContinue){
-        //     console.log("hello");
-        // }else{
-        //     process.exit(0)
-        // }
-        //
+    
         const chooseMode = await select({
             message : "Choose chat mode...",
             options: [
@@ -40,14 +25,15 @@ export class ChatCommand {
             ]
         })
 
-        if (isCancel(chooseMode)){
-            process.exit(0);
-        }
-
-        if (chooseMode == 'exit'){
+        if (isCancel(chooseMode) || chooseMode == 'exit'){
             process.exit(0);
         }
         
+        const rl = readline.createInterface({
+            input: stdin,
+            output: stdout,
+        });
+
         const conversation = new Conversation();
 
         while (true) {

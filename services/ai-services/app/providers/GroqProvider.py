@@ -29,7 +29,8 @@ class GroqProvider(ILLMProvider):
             response = self.client.chat.completions.create(
                 model=request.model or "llama-3.3-70b-versatile" , 
                 messages=request.messages,
-                tools=request.tools
+                tools=request.tools,
+                temperature=request.temperature if request.temperature is not None else 0.2,
             )
             
             # message = response.choices[0].message
@@ -75,7 +76,8 @@ class GroqProvider(ILLMProvider):
                 model=request.model or "llama-3.3-70b-versatile",
                 messages=request.messages,
                 stream=True,
-                tools=request.tools
+                tools=request.tools,
+                temperature=request.temperature if request.temperature is not None else 0.2,
                 
             )
             for chunk in response:

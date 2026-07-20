@@ -16,8 +16,11 @@ export class Agent implements IAgent{
         const response = await this.provider.generate(
             {
                 messages: prompt,
-                model: request.config?.model,
-                temperature: request.config?.temperature,
+                config: {
+                    model: request.config?.model,
+                    temperature: request.config?.temperature
+                }
+               
             
             }
         )

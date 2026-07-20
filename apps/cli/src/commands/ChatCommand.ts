@@ -62,7 +62,12 @@ export class ChatCommand {
 
                     let hadError = false
                     let assistantResponse = "";
-                    for await (const event of agent.stream({messages})){
+                    for await (const event of agent.stream({
+                                                            messages,
+                                                            config:{
+                                                                model:config.model,
+                                                                temperature: config.temperature,
+                                                            }})){
                         switch(event.type){
                             case "text":
                                 process.stdout.write(event.data as string);
@@ -106,7 +111,11 @@ export class ChatCommand {
                     spin.start("Thinking...")
                     try {
                         const response = await agent.execute({
-                            messages,                                   
+                            messages,
+                            config:{
+                                model: config.model,
+                                temperature: config.temperature,
+                            }                                   
                         });
                         spin.stop("Response ready")
                         console.log("\n🤖 AI >", response.text);

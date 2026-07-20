@@ -1,3 +1,4 @@
+import { config } from "node:process";
 import type { IProvider } from "../interfaces/IProvider.js";
 import type { ProviderRequest } from "../types/ProviderRequest.js";
 import type { ProviderResponse } from "../types/ProviderResponse.js";
@@ -26,6 +27,7 @@ export class PythonProvider implements IProvider {
                     },
                     body: JSON.stringify({
                         messages: request.messages,
+                        config: request.config,
                     }),
                     signal: controller.signal,
                 }
@@ -90,6 +92,7 @@ export class PythonProvider implements IProvider {
                     },
                     body: JSON.stringify({
                         messages: request.messages,
+                        config: request.config,
                     }),
                     signal: controller.signal,
                 }

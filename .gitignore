@@ -31,3 +31,12 @@ coverage/
 #write files
 writer.py
 project_dump.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/

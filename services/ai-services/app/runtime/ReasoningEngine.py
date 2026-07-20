@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import time
 
+from app.schemas.chat import GenerationConfig
 from app.providers.base import ILLMProvider
 from app.runtime.ProviderRequest import ProviderRequest
 from app.tools.executor import ToolExecutor
@@ -85,7 +86,7 @@ class ReasoningEngine:
                 )
             )
 
-    def run(self, messages: list[dict]) -> str:
+    def run(self, messages: list[dict], config: GenerationConfig,) -> str:
         
         self.logger.reasoning("Reasoning started.")          #logger
 
@@ -97,6 +98,8 @@ class ReasoningEngine:
             request = ProviderRequest(
                 messages=messages,
                 tools=self.registry.schemas(),
+                model=config.model,
+                temperature=config.temperature
             )
             start = time.perf_counter()
             self.logger.provider("Sending request to provider...")  #logger
@@ -113,6 +116,13 @@ class ReasoningEngine:
             )
 
             message = response.message
+            
+            if message.content and message.content.startswith("__PROVIDER_ERROR__"):
+                self.logger.error(message.content)
+                error_text = "Sorry, I had trouble processing that. Try rephrasing or simplifying your request."
+                messages.append({"role": "assistant", "content": error_text})
+                self.logger.reasoning("Reasoning finished with provider error.")
+                return error_text
 
             if not message.tool_calls:
                 messages.append({
@@ -150,6 +160,7 @@ class ReasoningEngine:
     def stream(
         self,
         messages: list[dict],
+        config: GenerationConfig,
     ):
 
         self.logger.reasoning(
@@ -175,15 +186,21 @@ class ReasoningEngine:
                 messages=messages,
                 tools=self.registry.schemas(),
                 stream=True,
+                model=config.model,
+                temperature=config.temperature,
             )
 
             content_parts: list[str] = []
 
             tool_calls: list[ToolCall] = []
-            
-            content = "".join(content_parts)
 
             for chunk in self.provider.stream(request):
+                
+                if chunk.finish_reason == "error":
+                    self.logger.error(f"Provider error: {chunk.content}")
+                    yield StreamEvent(type=StreamEventType.ERROR, data="The model had trouble with that request. Try rephrasing or simplifying it.")
+                    yield StreamEvent(type=StreamEventType.DONE, data=None)
+                    return
 
                 if chunk.content:
 
@@ -201,6 +218,8 @@ class ReasoningEngine:
                     tool_calls.extend(
                         chunk.tool_calls
                     )
+                    
+            content = "".join(content_parts)
 
             #
             # No tool calls

@@ -38,10 +38,14 @@ class LLMService:
             logger = self.logger,
         )
 
-    def chat(self, messages):
+    def chat(self, messages , config):
 
-        return self.engine.run(messages)
+        return self.engine.run(
+            messages=messages, 
+            config=config,)
 
-    def stream(self, messages):
+    def stream(self, messages, config):
 
-        yield from self.engine.stream(messages)
+        yield from self.engine.stream(
+            messages=messages,
+            config= config,)

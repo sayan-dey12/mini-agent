@@ -14,7 +14,15 @@ export class Agent implements IAgent{
     async execute(request: AgentRequest): Promise<AgentResponse> {
         const prompt = this.promptBuilder.build(request);
         const response = await this.provider.generate(
-            {messages: prompt}
+            {
+                messages: prompt,
+                config: {
+                    model: request.config?.model,
+                    temperature: request.config?.temperature
+                }
+               
+            
+            }
         )
         const fullResponse: AgentResponse = { text: response.text };
         return fullResponse;
@@ -28,6 +36,10 @@ export class Agent implements IAgent{
         for await (
             const event of this.provider.stream({
                 messages: prompt,
+                config: {
+                    model: request.config?.model,
+                    temperature: request.config?.temperature,
+                }
             })
         ) {
 

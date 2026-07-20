@@ -6,6 +6,8 @@ from app.providers.GroqProvider import GroqProvider
 
 from app.services.LLMServices import LLMService
 from app.runtime.StreamEventSerializer import StreamEventSerializer
+from app.runtime.StreamEvent import StreamEvent
+from app.runtime.StreamEventType import StreamEventType
 
 app = FastAPI()
 
@@ -22,10 +24,13 @@ async def home():
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
-
+    print(request)
+    messages = [message.model_dump() for message in request.messages]
     text = llm.chat(
-        [message.model_dump() for message in request.messages]
+        messages=messages,
+        config=request.config,
     )
+    
 
     return ChatResponse(
         text=text
@@ -34,6 +39,7 @@ async def chat(request: ChatRequest):
     
 @app.post("/chat/stream")
 async def stream_chat(request: ChatRequest):
+    print(request)
 
     def generate():
 
@@ -41,8 +47,14 @@ async def stream_chat(request: ChatRequest):
             message.model_dump()
             for message in request.messages
         ]
-        for event in llm.stream(messages):
-            yield StreamEventSerializer.serialize(event)
+        
+        try:
+            for event in llm.stream(
+                messages,
+                config=request.config):
+                yield StreamEventSerializer.serialize(event)
+        except Exception as e:
+            yield StreamEventSerializer.serialize(StreamEvent(type=StreamEventType.ERROR, data=str(e)))
 
     return StreamingResponse(
         generate(),

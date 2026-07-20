@@ -24,9 +24,10 @@ async def home():
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
-
+    messages = [message.model_dump() for message in request.messages]
     text = llm.chat(
-        [message.model_dump() for message in request.messages]
+        messages=messages,
+        config=request.config,
     )
     
 
@@ -46,7 +47,9 @@ async def stream_chat(request: ChatRequest):
         ]
         
         try:
-            for event in llm.stream(messages):
+            for event in llm.stream(
+                messages,
+                config=request.config):
                 yield StreamEventSerializer.serialize(event)
         except Exception as e:
             yield StreamEventSerializer.serialize(StreamEvent(type=StreamEventType.ERROR, data=str(e)))

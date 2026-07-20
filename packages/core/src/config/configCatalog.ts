@@ -21,12 +21,12 @@ export const CONFIG_CATALOG = {
                     label: "Llama 3.3 70B Versatile",
                 },
                 {
-                    id: "qwen/qwen3-32b",
-                    label: "Qwen 3 32B",
+                    id: "llama-3.1-8b-instant",
+                    label: "Llama 3.1 8B",
                 },
                 {
-                    id: "deepseek-r1-distill-llama-70b",
-                    label: "DeepSeek R1 Distill 70B",
+                    id: "openai/gpt-oss-20b",
+                    label: "GPT OSS 20B",
                 },
             ],
         },

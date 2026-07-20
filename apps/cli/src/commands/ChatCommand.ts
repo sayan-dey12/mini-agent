@@ -62,7 +62,12 @@ export class ChatCommand {
 
                     let hadError = false
                     let assistantResponse = "";
-                    for await (const event of agent.stream({messages})){
+                    for await (const event of agent.stream({
+                                                            messages,
+                                                            config:{
+                                                                model:config.model,
+                                                                temperature: config.temperature,
+                                                            }})){
                         switch(event.type){
                             case "text":
                                 process.stdout.write(event.data as string);

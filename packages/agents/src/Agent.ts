@@ -36,6 +36,10 @@ export class Agent implements IAgent{
         for await (
             const event of this.provider.stream({
                 messages: prompt,
+                config: {
+                    model: request.config?.model,
+                    temperature: request.config?.temperature,
+                }
             })
         ) {
 

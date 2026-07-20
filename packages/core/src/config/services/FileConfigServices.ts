@@ -24,7 +24,7 @@ export class FileConfigService implements IConfigService {
 
         try {
             const parsed = JSON.parse(raw) as Partial<AgentConfig>;
-            return {...DEFAULT_CONFIG , ...parsed};
+            return {...DEFAULT_CONFIG , ...parsed}; 
         } catch (error) {
             await this.reset();
             return DEFAULT_CONFIG;

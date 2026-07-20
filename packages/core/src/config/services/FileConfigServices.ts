@@ -23,7 +23,8 @@ export class FileConfigService implements IConfigService {
         const raw = await fs.readFile(this.configPath, "utf8");
 
         try {
-            return JSON.parse(raw) as AgentConfig;    
+            const parsed = JSON.parse(raw) as Partial<AgentConfig>;
+            return {...DEFAULT_CONFIG , ...parsed};
         } catch (error) {
             await this.reset();
             return DEFAULT_CONFIG;

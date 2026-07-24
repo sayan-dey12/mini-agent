@@ -11,8 +11,7 @@ from app.runtime.StreamEventType import StreamEventType
 
 app = FastAPI()
 
-provider = GroqProvider()
-llm = LLMService(provider)
+llm = LLMService()
 
 
 @app.get("/")

@@ -65,6 +65,7 @@ export class ChatCommand {
                     for await (const event of agent.stream({
                                                             messages,
                                                             config:{
+                                                                provider: config.provider,
                                                                 model:config.model,
                                                                 temperature: config.temperature,
                                                             }})){
@@ -113,6 +114,7 @@ export class ChatCommand {
                         const response = await agent.execute({
                             messages,
                             config:{
+                                provider: config.provider,
                                 model: config.model,
                                 temperature: config.temperature,
                             }                                   

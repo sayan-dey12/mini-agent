@@ -6,9 +6,10 @@ from app.providers.base import ILLMProvider
 from app.tools.manager import ToolManager
 from app.logging.RuntimeLogger import RuntimeLogger
 from app.tools.loader import ToolLoader
+from app.schemas.chat import GenerationConfig
 class LLMService:
 
-    def __init__(self, provider: ILLMProvider):
+    def __init__(self):
 
         self.registry = ToolRegistry()
         ToolLoader().load( self.registry )
@@ -32,19 +33,18 @@ class LLMService:
         self.logger = RuntimeLogger()
 
         self.engine = ReasoningEngine(
-            provider=provider,
             registry=self.registry,
             tool_manager=self.tool_manager,
             logger = self.logger,
         )
 
-    def chat(self, messages , config):
+    def chat(self,messages: list[dict] , config: GenerationConfig ):
 
         return self.engine.run(
             messages=messages, 
             config=config,)
 
-    def stream(self, messages, config):
+    def stream(self, messages: list[dict] , config: GenerationConfig):
 
         yield from self.engine.stream(
             messages=messages,

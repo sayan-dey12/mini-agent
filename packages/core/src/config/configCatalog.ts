@@ -41,9 +41,13 @@ export const CONFIG_CATALOG = {
                     label: "Llama 3.2",
                 },
                 {
-                    id: "qwen3",
-                    label: "Qwen 3",
+                    id: "qwen3:0.6b",
+                    label: "Qwen 3:0.6B",
                 },
+                {
+                    id: "gemma:2b",
+                    label: "Gemma:2B"
+                }
             ],
         },
     ],

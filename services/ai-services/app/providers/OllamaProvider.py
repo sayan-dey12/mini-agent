@@ -13,6 +13,8 @@ from app.runtime.ProviderRequest import ProviderRequest
 from app.runtime.ProviderResponse import ProviderResponse
 from app.runtime.StreamEvent import StreamEvent , StreamEventType
 from app.logging.RuntimeLogger import RuntimeLogger
+from app.runtime.ProviderMessage import ProviderMessage
+from app.providers.ollama.expception import ProviderError
 
 REQUEST_TIMEOUT = 60
 logger = RuntimeLogger()
@@ -121,7 +123,11 @@ class OllamaProvider(ILLMProvider):
         message = data.get("message",{})
 
         return ProviderResponse(
-            text=message.get("content","")
+            message=ProviderMessage(
+                role="assistant",
+                content=message.get("content", ""),
+                tool_calls=[],
+            )
         )
 
     def _handle_stream(
@@ -151,7 +157,7 @@ class OllamaProvider(ILLMProvider):
 
 
             yield StreamEvent(
-                type=StreamEventType.TEXT_DELTA,
+                type=StreamEventType.TEXT,
                 data=content
             )
 
@@ -162,7 +168,7 @@ class OllamaProvider(ILLMProvider):
 
         logger.error(f"Provider error: {error}")
 
-        raise self.ProviderError(
+        raise ProviderError(
             f"Unable to communicate with Ollama: {error}"
         ) from error
         

@@ -11,8 +11,7 @@ from app.runtime.StreamEventType import StreamEventType
 
 app = FastAPI()
 
-provider = GroqProvider()
-llm = LLMService(provider)
+llm = LLMService()
 
 
 @app.get("/")
@@ -24,7 +23,7 @@ async def home():
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
-    print(request)
+  #  print(request)
     messages = [message.model_dump() for message in request.messages]
     text = llm.chat(
         messages=messages,
@@ -39,7 +38,7 @@ async def chat(request: ChatRequest):
     
 @app.post("/chat/stream")
 async def stream_chat(request: ChatRequest):
-    print(request)
+  #  print(request)
 
     def generate():
 

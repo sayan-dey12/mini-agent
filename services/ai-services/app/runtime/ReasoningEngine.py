@@ -15,18 +15,17 @@ from app.runtime.StreamEvent import StreamEvent
 from app.runtime.StreamEventType import StreamEventType
 from app.runtime.ProviderMessage import ProviderMessage
 from app.runtime.ToolCall import ToolCall
+from app.providers.factory import ProviderFactory
 class ReasoningEngine:
 
     MAX_ITERATIONS = 5
 
     def __init__(
         self,
-        provider: ILLMProvider,
         registry: ToolRegistry,
         tool_manager: ToolManager,
         logger: RuntimeLogger,
     ):
-        self.provider = provider
         self.registry = registry
         self.tool_manager = tool_manager
         self.logger =logger
@@ -102,9 +101,16 @@ class ReasoningEngine:
                 temperature=config.temperature
             )
             start = time.perf_counter()
-            self.logger.provider("Sending request to provider...")  #logger
+            provider = ProviderFactory.create(
+                config.provider
+            )
+            self.logger.provider(
+                "Sending request",
+                provider=config.provider,
+                model=config.model,
+            )  #logger
 
-            response = self.provider.chat(request)
+            response = provider.chat(request)
             
             elapsed = (
                 time.perf_counter() - start
@@ -112,6 +118,7 @@ class ReasoningEngine:
 
             self.logger.provider(
                 "Response received",
+                provider=config.provider,
                 latency=f"{elapsed:.2f} ms",        #logger
             )
 
@@ -166,6 +173,9 @@ class ReasoningEngine:
         self.logger.reasoning(
             "Streaming reasoning started."
         )
+        provider = ProviderFactory.create(
+                        config.provider
+                    )
 
         for iteration in range(
             1,
@@ -181,6 +191,7 @@ class ReasoningEngine:
             # print("TOOLS SENT TO GROQ:")
             # print(json.dumps(self.registry.schemas(), indent=2))
             # print("=" * 80)
+            
 
             request = ProviderRequest(
                 messages=messages,
@@ -194,7 +205,7 @@ class ReasoningEngine:
 
             tool_calls: list[ToolCall] = []
 
-            for chunk in self.provider.stream(request):
+            for chunk in provider.stream(request):
                 
                 if chunk.finish_reason == "error":
                     self.logger.error(f"Provider error: {chunk.content}")

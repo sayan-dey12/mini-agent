@@ -104,11 +104,11 @@ class OllamaProvider(ILLMProvider):
     ) -> dict:
 
         return {
-            "model": request.config.model,
-            "messages": [message.model_dump() for message in request.messages],
+            "model": request.model,
+            "messages": request.messages,
             "stream": stream,
             "options": {
-                "temperature": request.config.temperature,
+                "temperature": request.temperature,
             },
         }
 

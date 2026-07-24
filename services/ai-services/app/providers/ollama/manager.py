@@ -99,7 +99,7 @@ class OllamaManager:
                 [
                     "wsl",
                     "-d",
-                    "UbuntuF"
+                    "UbuntuF",
                     "docker",
                     "start",
                     self.container_name,

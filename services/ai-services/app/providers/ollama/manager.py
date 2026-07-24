@@ -4,16 +4,8 @@ import subprocess
 import requests
 
 from app.logging.RuntimeLogger import RuntimeLogger
-
+from app.providers.ollama.expception import (OllamaStartupError , OllamaConnectionError)
 logger = RuntimeLogger("Ollama")
-
-
-class OllamaStartupError(Exception):
-    """Raised when Ollama cannot be started."""
-
-
-class OllamaConnectionError(Exception):
-    """Raised when Ollama cannot be reached."""
 
 
 class OllamaManager:

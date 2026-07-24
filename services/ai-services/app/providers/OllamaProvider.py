@@ -166,5 +166,3 @@ class OllamaProvider(ILLMProvider):
             f"Unable to communicate with Ollama: {error}"
         ) from error
         
-    class ProviderError(Exception):
-        pass

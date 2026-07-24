@@ -3,9 +3,10 @@ import time
 import subprocess
 import requests
 
-from app.logging.RuntimeLogger import RuntimeLogger
 from app.providers.ollama.expception import (OllamaStartupError , OllamaConnectionError)
-logger = RuntimeLogger("Ollama")
+from app.logging.RuntimeLogger import RuntimeLogger
+
+logger = RuntimeLogger()
 
 
 class OllamaManager:
@@ -96,6 +97,9 @@ class OllamaManager:
 
             subprocess.run(
                 [
+                    "wsl",
+                    "-d",
+                    "UbuntuF"
                     "docker",
                     "start",
                     self.container_name,

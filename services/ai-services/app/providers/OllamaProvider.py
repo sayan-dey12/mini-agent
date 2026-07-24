@@ -12,10 +12,10 @@ from app.providers.ollama.manager import (
 from app.runtime.ProviderRequest import ProviderRequest
 from app.runtime.ProviderResponse import ProviderResponse
 from app.runtime.StreamEvent import StreamEvent , StreamEventType
-from app.logging.RuntimeLogger import get_logger
+from app.logging.RuntimeLogger import RuntimeLogger
 
 REQUEST_TIMEOUT = 60
-logger = get_logger("Ollama")
+logger = RuntimeLogger()
 
 
 class OllamaProvider(ILLMProvider):

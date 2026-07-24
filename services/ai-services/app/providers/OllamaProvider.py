@@ -38,9 +38,9 @@ class OllamaProvider(ILLMProvider):
         )
 
         try:
-            logger.info(
-                f"Sending request to Ollama ({request.config.model})"
-            )
+            logger.provider(
+                "Sendign request",
+                model= request.model )
 
             response = requests.post(
                 f"{self.base_url}/api/chat",
@@ -74,9 +74,9 @@ class OllamaProvider(ILLMProvider):
 
         try:
             
-            logger.info(
-                f"Sending request to Ollama ({request.config.model})"
-            )
+            logger.provider(
+                "Sendign request",
+                model= request.model )
 
             response = requests.post(
                 f"{self.base_url}/api/chat",

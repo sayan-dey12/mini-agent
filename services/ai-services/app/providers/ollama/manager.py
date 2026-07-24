@@ -58,11 +58,11 @@ class OllamaManager:
 
         if self.is_running():
 
-            logger.info("Ollama is already running.")
+            logger.reasoning("Ollama is already running")
 
             return
 
-        logger.info("Ollama is not running.")
+        logger.reasoning("Ollama is not running.")
 
         self.start()
 
@@ -70,7 +70,7 @@ class OllamaManager:
         
     def start(self) -> None:
 
-        logger.info(
+        logger.reasoning(
             f"Starting Ollama using '{self.startup_mode}'."
         )
 
@@ -110,7 +110,7 @@ class OllamaManager:
                 text=True,
             )
 
-            logger.info(
+            logger.reasoning(
                 "Docker container started."
             )
 
@@ -138,7 +138,7 @@ class OllamaManager:
                 stderr=subprocess.DEVNULL,
             )
 
-            logger.info(
+            logger.reasoning(
                 "Started native Ollama."
             )
 
@@ -152,7 +152,7 @@ class OllamaManager:
             
     def wait_until_ready(self) -> None:
 
-        logger.info(
+        logger.reasoning(
             "Waiting for Ollama..."
         )
 
@@ -162,7 +162,7 @@ class OllamaManager:
 
             if self.is_running():
 
-                logger.info(
+                logger.reasoning(
                     "Ollama is ready."
                 )
 

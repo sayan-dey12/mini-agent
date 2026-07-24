@@ -6,6 +6,7 @@ class ChatMessage(BaseModel):
     content: str
     
 class GenerationConfig(BaseModel):
+    provider: str
     model: str
     temperature: float
 class ChatRequest(BaseModel):

@@ -17,6 +17,7 @@ export class Agent implements IAgent{
             {
                 messages: prompt,
                 config: {
+                    provider: request.config?.provider,
                     model: request.config?.model,
                     temperature: request.config?.temperature
                 }
@@ -37,6 +38,7 @@ export class Agent implements IAgent{
             const event of this.provider.stream({
                 messages: prompt,
                 config: {
+                    provider: request.config?.provider,
                     model: request.config?.model,
                     temperature: request.config?.temperature,
                 }

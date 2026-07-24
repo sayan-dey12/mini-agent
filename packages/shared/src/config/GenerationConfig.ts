@@ -1,5 +1,5 @@
 export interface GenerationConfig {
-    provider: "groq" | "ollama";
+    provider: string | undefined;
     model: string | undefined;
     temperature: number | undefined;
 }

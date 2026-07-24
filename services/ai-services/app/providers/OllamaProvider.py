@@ -15,6 +15,7 @@ from app.runtime.StreamEvent import StreamEvent , StreamEventType
 from app.logging.RuntimeLogger import RuntimeLogger
 from app.runtime.ProviderMessage import ProviderMessage
 from app.providers.ollama.expception import ProviderError
+from app.runtime.ProviderChunk import ProviderChunk
 
 REQUEST_TIMEOUT = 60
 logger = RuntimeLogger()
@@ -65,7 +66,7 @@ class OllamaProvider(ILLMProvider):
     def stream(
         self,
         request: ProviderRequest,
-    ) -> Iterator[StreamEvent]:
+    ) -> Iterator[ProviderChunk]:
 
         self.manager.ensure_running()
 
@@ -133,7 +134,7 @@ class OllamaProvider(ILLMProvider):
     def _handle_stream(
         self,
         response: requests.Response,
-    ) -> Iterator[StreamEvent]:
+    ) -> Iterator[ProviderChunk]:
 
         for line in response.iter_lines():
 
@@ -143,24 +144,31 @@ class OllamaProvider(ILLMProvider):
             chunk = json.loads(line)
 
             if chunk.get("done"):
+
+                yield ProviderChunk(
+                    content="",
+                    tool_calls=[],
+                    finish_reason=chunk.get(
+                        "done_reason",
+                        "stop",
+                    ),
+                )
+
                 break
-            
-            message = chunk.get("message")
 
-            if not message:
-                continue
-            
-            content = message.get("content")
+            message = chunk.get("message", {})
 
-            if not content:
-                continue
+            content = message.get("content", "")
 
+            if content:
 
-            yield StreamEvent(
-                type=StreamEventType.TEXT,
-                data=content
-            )
-
+                yield ProviderChunk(
+                    content=content,
+                    tool_calls=[],
+                    finish_reason=None,
+                )
+        
+    
     def _raise_provider_error(
         self,
         error: Exception,
